@@ -8,28 +8,35 @@ RUN npm install -g pnpm@11.2.2
 
 WORKDIR /project
 
-# Copy package files first to leverage layer caching
-COPY matrix-js-sdk/package.json matrix-js-sdk/pnpm-lock.yaml ./matrix-js-sdk/
-COPY element-web/package.json element-web/pnpm-lock.yaml ./element-web/
+# 1. Copy necessary files for each folder
+COPY matrix-js-sdk/package.json matrix-js-sdk/pnpm-lock.yaml matrix-js-sdk/pnpm-workspace.yaml ./matrix-js-sdk/
+COPY element-web/package.json element-web/pnpm-lock.yaml element-web/pnpm-workspace.yaml ./element-web/
 
-# Install all dependencies
+# 2. Install dependencies for each folder individually
+WORKDIR /project/matrix-js-sdk
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# 3. Create the .link-config exactly as you do in entrypoint.sh
+WORKDIR /project/element-web
+RUN echo "matrix-js-sdk=/project/matrix-js-sdk=apps/web" > .link-config
+
+# 4. Install dependencies for element-web
+RUN pnpm install --frozen-lockfile
+
+# 5. Copy the rest of the source code
+WORKDIR /project
 COPY . .
 
-# Run the build command (Adjust if your build command is different)
-# Assuming Nx is used for production builds
-RUN pnpm build 
+# 6. Build projects
+WORKDIR /project/element-web
+RUN pnpm build
 
 # --- Stage 2: Production ---
 FROM nginx:alpine
 
-# Copy built assets from the builder stage
-# Adjust the path based on where your project outputs the final static files
+# Copy built assets
 COPY --from=builder /project/element-web/apps/web/dist /usr/share/nginx/html
 
-# Expose port
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
