@@ -2,13 +2,7 @@ services:
   chat-frontend:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: chat-frontend-prod
+      target: production
     ports:
-      - "80:80"
-    restart: always
-    # Production မှာဆိုရင် environment variables များကို ဒီနေရာမှာ ထည့်နိုင်သည်
-    environment:
-      - NODE_ENV=production
-    # Security အတွက် root user မဟုတ်ဘဲ run ချင်လျှင် ဒီမှာ ထည့်သွင်းနိုင်သည်
-    # user: "1000:1000"
+      - "8080:8080"
+    restart: unless-stopped

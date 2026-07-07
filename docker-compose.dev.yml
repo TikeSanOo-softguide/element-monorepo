@@ -1,0 +1,17 @@
+services:
+  chat-frontend:
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./matrix-js-sdk:/project/matrix-js-sdk
+      - ./element-web:/project/element-web
+      # named volumes so container's own node_modules aren't clobbered by host mount
+      - sdk_node_modules:/project/matrix-js-sdk/node_modules
+      - web_node_modules:/project/element-web/node_modules
+    ports:
+      - "8080:8080"
+
+volumes:
+  sdk_node_modules:
+  web_node_modules:

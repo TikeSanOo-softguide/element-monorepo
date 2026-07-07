@@ -1,5 +1,9 @@
-# --- Stage 1: Build ---
-FROM node:22-bookworm-slim AS builder
+# syntax=docker/dockerfile:1.6
+
+########################################
+# Base: shared toolchain
+########################################
+FROM node:22-bookworm-slim AS base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git python3 make g++ \
@@ -7,37 +11,57 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN npm install -g pnpm@11.2.2
 
-# ... (အပေါ်ကအပိုင်းတွေ အတူတူပဲ)
-
 WORKDIR /project
 
-# 1. Root configuration file များကို အရင်ကူးပါ (ဒီအချက်က အဓိကပါ!)
-COPY package.json pnpm-workspace.yaml* ./
+########################################
+# 1. Build matrix-js-sdk (dependency)
+########################################
+FROM base AS sdk-build
 
-# 2. သက်ဆိုင်ရာ folder အလိုက် package.json များကို ကူးပါ
-COPY matrix-js-sdk/package.json ./matrix-js-sdk/
-COPY element-web/package.json ./element-web/
-
-# 3. matrix-js-sdk Dependencies install လုပ်ခြင်း
 WORKDIR /project/matrix-js-sdk
-RUN pnpm install --ignore-scripts
+COPY matrix-js-sdk/package.json matrix-js-sdk/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# 4. element-web Dependencies install လုပ်ခြင်း
+COPY matrix-js-sdk/ ./
+RUN pnpm run build
+
+########################################
+# 2. Build element-web, linked to the SDK
+########################################
+FROM base AS webapp-build
+
+# Bring in the already-built SDK
+COPY --from=sdk-build /project/matrix-js-sdk /project/matrix-js-sdk
+
 WORKDIR /project/element-web
-RUN pnpm install --ignore-scripts
+COPY element-web/package.json element-web/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# 5. Build SDK first
-WORKDIR /project/matrix-js-sdk
-RUN pnpm build
+# Point element-web's matrix-js-sdk dependency at the local build
+RUN pnpm link --dir /project/matrix-js-sdk
 
-# 6. Build Web App
-WORKDIR /project/element-web
-RUN echo "matrix-js-sdk=/project/matrix-js-sdk=apps/web" > .link-config
-WORKDIR /project/element-web/apps/web
-RUN pnpm build
+COPY element-web/ ./
+RUN pnpm run build
 
-# --- Stage 2: Production ---
-FROM nginx:alpine
-COPY --from=builder /project/element-web/apps/web/dist /usr/share/nginx/html
-EXPOSE 80
+########################################
+# 3a. PRODUCTION: static files via nginx
+########################################
+FROM nginx:1.27-alpine AS production
+
+COPY --from=webapp-build /project/element-web/webapp /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 8080
 CMD ["nginx", "-g", "daemon off;"]
+
+########################################
+# 3b. DEVELOPMENT: live dev server
+########################################
+FROM base AS development
+
+WORKDIR /project
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8080
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
