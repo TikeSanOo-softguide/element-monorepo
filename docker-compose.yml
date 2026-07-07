@@ -1,24 +1,14 @@
 services:
-  element-web:
+  chat-frontend:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: chat-frontend-prod
     ports:
-      - "8080:8080"
-    volumes:
-      - ./:/project
-      - js_sdk_node_modules:/project/matrix-js-sdk/node_modules
-      - web_node_modules:/project/element-web/node_modules
-      - app_node_modules:/project/element-web/apps/web/node_modules
+      - "80:80"
+    restart: always
+    # Production မှာဆိုရင် environment variables များကို ဒီနေရာမှာ ထည့်နိုင်သည်
     environment:
-      - PORT=8080
-      - SKIP_INSTALL=0
-      - NX_SKIP_NX_CACHE=true
-      - NX_DAEMON=false
-    stdin_open: true
-    tty: true
-
-volumes:
-  js_sdk_node_modules:
-  web_node_modules:
-  app_node_modules:
+      - NODE_ENV=production
+    # Security အတွက် root user မဟုတ်ဘဲ run ချင်လျှင် ဒီမှာ ထည့်သွင်းနိုင်သည်
+    # user: "1000:1000"

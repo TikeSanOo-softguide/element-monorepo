@@ -1,19 +1,27 @@
-up: ## Build and start the dev server
-	COMPOSE_BAKE=true docker compose up --build
+# Project Settings
+PROJECT_NAME := chat-frontend
+DOCKER_COMPOSE := docker compose
 
-down: ## Stop and remove containers
-	docker compose down
+.PHONY: help build up down logs restart clean
 
-logs: ## Tail logs
-	docker compose logs -f
+help: ## Show this help message
+	@echo "Available commands:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-shell: ## Open a shell in the running container
-	docker compose exec element-web bash
+build: ## Build the docker image
+	$(DOCKER_COMPOSE) build
 
-clean: ## Stop containers and wipe node_modules volumes
-	docker compose down -v
+up: ## Start the container in detached mode
+	$(DOCKER_COMPOSE) up -d
 
-reset-setup: ## Force the full install/link/prebuild pipeline to rerun on next start
-	FORCE_SETUP=1 docker compose up --build
+down: ## Stop and remove the container
+	$(DOCKER_COMPOSE) down
 
-.PHONY: up down logs shell clean reset-setup
+logs: ## Follow the container logs
+	$(DOCKER_COMPOSE) logs -f
+
+restart: ## Restart the container
+	$(DOCKER_COMPOSE) restart
+
+clean: ## Remove containers and clean up build artifacts
+	$(DOCKER_COMPOSE) down --rmi all --volumes
