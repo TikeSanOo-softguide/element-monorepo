@@ -7,23 +7,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN npm install -g pnpm@11.2.2
 
+# ... (အပေါ်ကအပိုင်းတွေ အတူတူပဲ)
+
 WORKDIR /project
 
-# 1. lock file မရှိတဲ့အတွက် package.json တစ်ခုတည်းကိုပဲ ခွဲကူးပါမယ်
+# 1. Root configuration file များကို အရင်ကူးပါ (ဒီအချက်က အဓိကပါ!)
+COPY package.json pnpm-workspace.yaml* ./
+
+# 2. သက်ဆိုင်ရာ folder အလိုက် package.json များကို ကူးပါ
 COPY matrix-js-sdk/package.json ./matrix-js-sdk/
 COPY element-web/package.json ./element-web/
 
-# 2. matrix-js-sdk Dependencies install လုပ်ခြင်း (--frozen-lockfile ဖြုတ်ထားပါတယ်)
+# 3. matrix-js-sdk Dependencies install လုပ်ခြင်း
 WORKDIR /project/matrix-js-sdk
 RUN pnpm install --ignore-scripts
 
-# 3. element-web Dependencies install လုပ်ခြင်း (--frozen-lockfile ဖြုတ်ထားပါတယ်)
+# 4. element-web Dependencies install လုပ်ခြင်း
 WORKDIR /project/element-web
-RUN pnpm install --ignore-scripts
-
-# 4. Source code တစ်ခုလုံးကို Copy ကူးယူခြင်း
-WORKDIR /project
-COPY . .
 
 # 5. Build SDK first
 WORKDIR /project/matrix-js-sdk
