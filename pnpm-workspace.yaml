@@ -1,0 +1,16 @@
+# Recommended root workspace (optional migration path).
+# After adopting this file, run `pnpm install` once at the repo root to
+# generate a unified pnpm-lock.yaml, then remove nested lockfiles if desired.
+
+packages:
+  - "matrix-js-sdk"
+  - "element-web/apps/*"
+  - "element-web/packages/*"
+  - "element-web/modules"
+  - "element-web/modules/*"
+
+linkWorkspacePackages: true
+ignoreWorkspaceRootCheck: true
+
+# Inherit element-web catalog + patch policy when you migrate fully.
+# Until then, Docker builds continue to use each project's own lockfile.

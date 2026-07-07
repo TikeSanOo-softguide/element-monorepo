@@ -1,0 +1,43 @@
+services:
+  element-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: chat-frontend-prod
+    restart: unless-stopped
+    ports:
+      - "${ELEMENT_WEB_PORT:-8080}:8080"
+    environment:
+      ELEMENT_WEB_PORT: "8080"
+      NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+      # Optional runtime homeserver overrides (applied in startup.sh)
+      ELEMENT_DEFAULT_HS_URL: "${ELEMENT_DEFAULT_HS_URL:-}"
+      ELEMENT_DEFAULT_SERVER_NAME: "${ELEMENT_DEFAULT_SERVER_NAME:-}"
+      ELEMENT_BRAND: "${ELEMENT_BRAND:-Element}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/config.json || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    # Optional runtime modules (uncomment and provide a host directory)
+    # volumes:
+    #   - ./runtime-modules:/modules:ro
+
+networks:
+  default:
+    name: chat-frontend-prod

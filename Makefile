@@ -1,95 +1,61 @@
-# =========================================
-# chat-frontend Makefile
-# =========================================
+# chat-frontend — Docker orchestration
 
-COMPOSE        := docker compose -f docker-compose.yml
-COMPOSE_DEV    := docker compose -f docker-compose.yml -f docker-compose.dev.yml
-SERVICE        := chat-frontend
+COMPOSE_DEV  := docker compose -f docker-compose.yml
+COMPOSE_PROD := docker compose -f docker-compose.production.yml
+SERVICE      := element-web
 
-.PHONY: help build build-prod build-dev up down dev prod logs logs-dev \
-        sh sh-dev clean clean-volumes restart restart-dev ps
+.PHONY: help dev prod build-dev build-prod down down-dev logs logs-dev sh sh-dev clean clean-volumes ps
 
-## Show available targets
 help:
 	@echo "Targets:"
-	@echo "  make prod           - Build & run production (nginx, static build)"
-	@echo "  make dev            - Build & run local development (live reload)"
-	@echo "  make build-prod     - Build production image only"
-	@echo "  make build-dev      - Build development image only"
-	@echo "  make down           - Stop and remove containers (prod)"
-	@echo "  make down-dev       - Stop and remove containers (dev)"
-	@echo "  make logs           - Tail production logs"
-	@echo "  make logs-dev       - Tail development logs"
-	@echo "  make sh             - Shell into running prod container"
-	@echo "  make sh-dev         - Shell into running dev container"
-	@echo "  make restart        - Restart prod stack"
-	@echo "  make restart-dev    - Restart dev stack"
-	@echo "  make clean          - Remove containers, images, orphans (prod)"
-	@echo "  make clean-volumes  - Also wipe node_modules volumes (dev)"
-	@echo "  make ps             - Show running containers"
+	@echo "  make dev            Build & run development stack (hot reload)"
+	@echo "  make prod           Build & run production stack (nginx)"
+	@echo "  make build-dev      Build development image only"
+	@echo "  make build-prod     Build production image only"
+	@echo "  make down-dev       Stop development stack"
+	@echo "  make down           Stop production stack"
+	@echo "  make logs-dev       Tail development logs"
+	@echo "  make logs           Tail production logs"
+	@echo "  make sh-dev         Shell into development container"
+	@echo "  make sh             Shell into production container"
+	@echo "  make clean-volumes  Remove dev containers, images, and node_modules volumes"
+	@echo "  make clean          Remove prod containers and local images"
 
-# ---------- Production ----------
-
-## Build production image
-build-prod:
-	$(COMPOSE) build
-
-## Build & start production stack (detached)
-prod: build-prod
-	$(COMPOSE) up -d
-
-## Stop production stack
-down:
-	$(COMPOSE) down
-
-## Restart production stack
-restart:
-	$(COMPOSE) restart
-
-## Tail production logs
-logs:
-	$(COMPOSE) logs -f $(SERVICE)
-
-## Shell into running production container
-sh:
-	$(COMPOSE) exec $(SERVICE) sh
-
-# ---------- Development ----------
-
-## Build development image
 build-dev:
 	$(COMPOSE_DEV) build
 
-## Build & start development stack (foreground, live logs)
 dev: build-dev
 	$(COMPOSE_DEV) up
 
-## Stop development stack
+build-prod:
+	DOCKER_BUILDKIT=1 $(COMPOSE_PROD) build
+
+prod: build-prod
+	$(COMPOSE_PROD) up -d
+
 down-dev:
 	$(COMPOSE_DEV) down
 
-## Restart development stack
-restart-dev:
-	$(COMPOSE_DEV) restart
+down:
+	$(COMPOSE_PROD) down
 
-## Tail development logs
 logs-dev:
 	$(COMPOSE_DEV) logs -f $(SERVICE)
 
-## Shell into running development container
+logs:
+	$(COMPOSE_PROD) logs -f $(SERVICE)
+
 sh-dev:
 	$(COMPOSE_DEV) exec $(SERVICE) bash
 
-# ---------- Cleanup ----------
+sh:
+	$(COMPOSE_PROD) exec $(SERVICE) sh
 
-## Remove containers, dangling images, and orphans (production)
 clean:
-	$(COMPOSE) down --rmi local --remove-orphans
+	$(COMPOSE_PROD) down --rmi local --remove-orphans
 
-## Remove containers, images, and named volumes (wipes cached node_modules)
 clean-volumes:
 	$(COMPOSE_DEV) down --rmi local --remove-orphans --volumes
 
-## Show running containers for this project
 ps:
-	$(COMPOSE) ps
+	$(COMPOSE_PROD) ps

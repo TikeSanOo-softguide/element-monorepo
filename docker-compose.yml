@@ -1,8 +1,28 @@
 services:
-  chat-frontend:
+  element-web:
     build:
       context: .
-      target: production
+      dockerfile: Dockerfile.dev
+    container_name: chat-frontend-dev
     ports:
-      - "8080:8080"
-    restart: unless-stopped
+      - "${ELEMENT_WEB_PORT:-8080}:8080"
+    environment:
+      ELEMENT_WEB_PORT: "8080"
+      # Helps file watching work reliably on Docker Desktop / WSL bind mounts
+      CHOKIDAR_USEPOLLING: "${CHOKIDAR_USEPOLLING:-true}"
+      WATCHPACK_POLLING: "${WATCHPACK_POLLING:-true}"
+    volumes:
+      # Live source mounts
+      - ./matrix-js-sdk:/project/matrix-js-sdk
+      - ./element-web:/project/element-web
+      # Preserve container-installed node_modules across host bind mounts
+      - sdk_node_modules:/project/matrix-js-sdk/node_modules
+      - web_node_modules:/project/element-web/node_modules
+      - web_pnpm:/project/element-web/.pnpm
+    stdin_open: true
+    tty: true
+
+volumes:
+  sdk_node_modules:
+  web_node_modules:
+  web_pnpm:

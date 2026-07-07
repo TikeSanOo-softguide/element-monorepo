@@ -1,6 +1,48 @@
-**/node_modules
+# Git and editor noise
 **/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/.DS_Store
+
+# Dependencies (reinstalled inside the image)
+**/node_modules
+**/.pnpm-store
+
+# Build outputs (rebuilt inside the image)
 **/dist
-**/build
-**/.turbo
+**/lib
+**/webapp
+**/storybook-static
+**/.nx/cache
+**/coverage
+**/*.tsbuildinfo
+
+# Tests and docs (not needed for production images)
+**/test/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+**/*.stories.tsx
+**/playwright/
+**/docs/
+**/*.md
+!element-web/apps/web/config.sample.json
+
+# Desktop app (not used for web Docker builds)
+element-web/apps/desktop/
+!element-web/apps/desktop/package.json
+
+# Local dev artifacts
 **/*.log
+**/.env
+**/.env.*
+element-web/apps/web/config.json
+element-web/apps/web/webpack-stats.json
+element-web/apps/web/debian/
+
+# Keep Docker assets in context
+!nginx.conf
+!startup.sh
+!entrypoint.dev.sh

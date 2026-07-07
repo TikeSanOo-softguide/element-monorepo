@@ -1,0 +1,23 @@
+{
+  "name": "chat-frontend",
+  "private": true,
+  "description": "Unified Matrix Element frontend workspace (matrix-js-sdk + element-web)",
+  "packageManager": "pnpm@11.2.2",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "install:all": "pnpm --dir matrix-js-sdk install && pnpm --dir element-web install",
+    "build:sdk": "pnpm --dir matrix-js-sdk build",
+    "build:web": "pnpm --dir element-web/apps/web build",
+    "build": "pnpm build:sdk && pnpm build:web",
+    "dev": "pnpm --dir element-web nx start element-web",
+    "docker:prod": "docker compose -f docker-compose.production.yml up --build -d",
+    "docker:dev": "docker compose up --build"
+  },
+  "pnpm": {
+    "overrides": {
+      "matrix-js-sdk": "workspace:*"
+    }
+  }
+}

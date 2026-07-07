@@ -1,0 +1,66 @@
+# syntax=docker/dockerfile:1.7
+
+#############################################
+# Development image
+# - installs both projects once
+# - relies on bind mounts + named node_modules volumes at runtime
+# - hot reload via nx + webpack-dev-server
+#############################################
+
+ARG NODE_VERSION=22-bookworm-slim
+ARG PNPM_VERSION=11.2.2
+
+FROM node:${NODE_VERSION} AS development
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="${PNPM_HOME}:${PATH}"
+ENV CI=true
+ENV CHOKIDAR_USEPOLLING=true
+ENV ELEMENT_WEB_PORT=8080
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        git \
+        python3 \
+        make \
+        g++ \
+    && rm -rf /var/lib/apt/lists/* \
+    && corepack enable \
+    && corepack prepare "pnpm@${PNPM_VERSION}" --activate
+
+WORKDIR /project
+
+# ---- matrix-js-sdk dependency layer ----
+COPY matrix-js-sdk/package.json matrix-js-sdk/pnpm-lock.yaml matrix-js-sdk/pnpm-workspace.yaml ./matrix-js-sdk/
+RUN --mount=type=cache,id=chat-frontend-pnpm-store,target=/pnpm/store \
+    cd matrix-js-sdk && pnpm install --frozen-lockfile --ignore-scripts
+
+# ---- element-web dependency layer ----
+COPY element-web/package.json element-web/pnpm-lock.yaml element-web/pnpm-workspace.yaml ./element-web/
+COPY element-web/patches ./element-web/patches
+COPY element-web/scripts/pnpm-link.ts ./element-web/scripts/pnpm-link.ts
+COPY element-web/.link-config ./element-web/.link-config
+COPY element-web/apps/web/package.json ./element-web/apps/web/package.json
+COPY element-web/apps/desktop/package.json ./element-web/apps/desktop/package.json
+COPY element-web/packages/shared-components/package.json ./element-web/packages/shared-components/package.json
+COPY element-web/packages/module-api/package.json ./element-web/packages/module-api/package.json
+COPY element-web/packages/playwright-common/package.json ./element-web/packages/playwright-common/package.json
+COPY element-web/modules/package.json ./element-web/modules/package.json
+COPY element-web/modules/banner/package.json ./element-web/modules/banner/package.json
+COPY element-web/modules/widget-lifecycle/package.json ./element-web/modules/widget-lifecycle/package.json
+COPY element-web/modules/widget-toggles/package.json ./element-web/modules/widget-toggles/package.json
+COPY element-web/modules/restricted-guests/package.json ./element-web/modules/restricted-guests/package.json
+
+# Seed SDK source so postinstall can link before bind mounts attach
+COPY matrix-js-sdk/ ./matrix-js-sdk/
+
+RUN --mount=type=cache,id=chat-frontend-pnpm-store,target=/pnpm/store \
+    cd element-web && pnpm install --frozen-lockfile
+
+COPY entrypoint.dev.sh /usr/local/bin/entrypoint.dev.sh
+RUN chmod +x /usr/local/bin/entrypoint.dev.sh
+
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.dev.sh"]
