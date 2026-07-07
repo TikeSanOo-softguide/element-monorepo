@@ -1,0 +1,24 @@
+services:
+  element-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/project
+      - js_sdk_node_modules:/project/matrix-js-sdk/node_modules
+      - web_node_modules:/project/element-web/node_modules
+      - app_node_modules:/project/element-web/apps/web/node_modules
+    environment:
+      - PORT=8080
+      - SKIP_INSTALL=0
+      - NX_SKIP_NX_CACHE=true
+      - NX_DAEMON=false
+    stdin_open: true
+    tty: true
+
+volumes:
+  js_sdk_node_modules:
+  web_node_modules:
+  app_node_modules:
