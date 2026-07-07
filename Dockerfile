@@ -9,7 +9,7 @@ RUN npm install -g pnpm@11.2.2
 WORKDIR /project
 
 # Copy package files first to leverage layer caching
-COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY pnpm-lock.yaml ./
 COPY matrix-js-sdk/package.json ./matrix-js-sdk/
 COPY element-web/package.json ./element-web/
 COPY element-web/apps/web/package.json ./element-web/apps/web/
