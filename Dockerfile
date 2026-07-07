@@ -24,6 +24,7 @@ RUN pnpm install --ignore-scripts
 
 # 4. element-web Dependencies install လုပ်ခြင်း
 WORKDIR /project/element-web
+RUN pnpm install --ignore-scripts
 
 # 5. Build SDK first
 WORKDIR /project/matrix-js-sdk
