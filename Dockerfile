@@ -3,40 +3,41 @@ FROM node:22-bookworm-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git python3 make g++ && rm -rf /var/lib/apt/lists/*
-
 RUN npm install -g pnpm@11.2.2
 
 WORKDIR /project
 
-# 1. Copy necessary files for each folder
-COPY matrix-js-sdk/package.json matrix-js-sdk/pnpm-lock.yaml matrix-js-sdk/pnpm-workspace.yaml ./matrix-js-sdk/
-COPY element-web/package.json element-web/pnpm-lock.yaml element-web/pnpm-workspace.yaml ./element-web/
+# 1. Copy ONLY lock/package files first for layer caching
+COPY matrix-js-sdk/package.json matrix-js-sdk/pnpm-lock.yaml ./matrix-js-sdk/
+COPY element-web/package.json element-web/pnpm-lock.yaml ./element-web/
 
-# 2. Install dependencies for each folder individually
+# 2. Install SDK dependencies
 WORKDIR /project/matrix-js-sdk
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# 3. Create the .link-config exactly as you do in entrypoint.sh
+# 3. Install element-web dependencies
 WORKDIR /project/element-web
-RUN echo "matrix-js-sdk=/project/matrix-js-sdk=apps/web" > .link-config
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# 4. Install dependencies for element-web
-RUN pnpm install --frozen-lockfile
-
-# 5. Copy the rest of the source code
+# 4. Copy the rest of the source code
 WORKDIR /project
 COPY . .
 
-# 6. Build projects
+# 5. Build SDK first
+WORKDIR /project/matrix-js-sdk
+RUN pnpm build
+
+# 6. Build Web App
 WORKDIR /project/element-web
+# Re-creating dev link
+RUN echo "matrix-js-sdk=/project/matrix-js-sdk=apps/web" > .link-config
+# Move to the app dir to trigger the build
+WORKDIR /project/element-web/apps/web
 RUN pnpm build
 
 # --- Stage 2: Production ---
 FROM nginx:alpine
-
-# Copy built assets
+# Copy the built assets
 COPY --from=builder /project/element-web/apps/web/dist /usr/share/nginx/html
-
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
