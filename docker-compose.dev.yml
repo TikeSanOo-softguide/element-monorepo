@@ -1,0 +1,38 @@
+﻿services:
+  element-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+
+    container_name: element-dev
+
+    ports:
+      - "3030:3030"
+
+    volumes:
+      # Source code hot reload
+      - ./element-web:/workspace/element-web
+      - ./matrix-js-sdk:/workspace/matrix-js-sdk
+
+      # Keep node_modules inside docker volume
+      - dev_js_sdk_node_modules:/workspace/matrix-js-sdk/node_modules
+      - dev_web_node_modules:/workspace/element-web/node_modules
+      - dev_app_node_modules:/workspace/element-web/apps/web/node_modules
+
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3030
+      NX_SKIP_NX_CACHE: "true"
+      NX_DAEMON: "false"
+
+    command: >
+      bash -lc "
+        cd /workspace/element-web &&
+        exec pnpm start
+      "
+
+volumes:
+  dev_js_sdk_node_modules:
+  dev_web_node_modules:
+  dev_app_node_modules:

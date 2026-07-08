@@ -1,0 +1,48 @@
+FROM node:22-bookworm
+
+WORKDIR /workspace
+
+RUN corepack enable
+
+ENV CI=true
+ENV PNPM_CONFIRM_MODULES_PURGE=false
+
+# ==========================
+# matrix-js-sdk
+# ==========================
+COPY matrix-js-sdk ./matrix-js-sdk
+
+WORKDIR /workspace/matrix-js-sdk
+
+RUN pnpm install
+
+
+# ==========================
+# element-
+# ==========================
+WORKDIR /workspace
+
+COPY element- ./element-web
+
+
+# ==========================
+# Link matrix-js-sdk
+# ==========================
+WORKDIR /workspace/element-web
+
+RUN echo "matrix-js-sdk=/workspace/matrix-js-sdk=apps/web" > .link-config
+
+# ==========================
+# Install element-web deps
+# ==========================
+RUN pnpm install
+
+
+# ==========================
+# Install web app deps
+# ==========================
+WORKDIR /workspace/element-web/apps/web
+RUN pnpm install
+EXPOSE 3030
+WORKDIR /workspace/element-web/workspace/element-web/apps/
+CMD ["pnpm", "start"]

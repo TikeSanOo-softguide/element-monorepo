@@ -1,0 +1,10 @@
+services:
+  element-web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.prod
+    image: chat-frontend-element-web:prod
+    container_name: element-web-prod
+    ports:
+      - "8080:80"
+    restart: unless-stopped
