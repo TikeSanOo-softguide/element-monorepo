@@ -17,11 +17,11 @@ import ElementDesktopLogoSvg from "../res/img/element-desktop-logo.svg";
 
 // see element-web config.md for docs, or the IConfigOptions interface for dev docs
 export const DEFAULTS: DeepReadonly<IConfigOptions> = {
-    brand: "Element",
+    brand: "Yaung Ni Oo",
     branding: {
-        logo_link_url: "https://element.io",
-        auth_header_logo_url: "themes/element/img/logos/element-logo.svg",
-        welcome_background_url: "themes/element/img/backgrounds/lake.jpg",
+        logo_link_url: "https://www.tiktok.com/@yaung.ni.oo.wifi",
+        auth_header_logo_url: "themes/element/img/logos/yaung-ni-oo-logo.jpeg",
+        welcome_background_url: "themes/element/img/backgrounds/bagan.jpg",
     },
     help_url: "https://element.io/help",
     help_encryption_url: "https://element.io/help#encryption",

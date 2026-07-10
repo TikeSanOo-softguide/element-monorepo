@@ -15,8 +15,8 @@ import { getVectorConfig } from "../getconfig";
 import { MobileAppVariant, mobileApps, updateMobilePage } from "./mobile-apps.ts";
 
 function onBackToElementClick(): void {
-    // Cookie should expire in 4 hours
-    document.cookie = "element_mobile_redirect_to_guide=false;path=/;max-age=14400";
+    // Cookie should expire in 1 month
+    document.cookie = "element_mobile_redirect_to_guide=false;path=/;max-age=2592000";
     window.location.href = "../";
 }
 
@@ -60,7 +60,7 @@ async function initPage(): Promise<void> {
     if (defaultHsUrl && (wkConfig || serverName)) {
         return renderConfigError(
             "Invalid configuration: a default_hs_url can't be specified along with default_server_name " +
-                "or default_server_config",
+            "or default_server_config",
         );
     }
     if (incompatibleOptions.length < 1) {

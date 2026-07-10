@@ -7,7 +7,7 @@ Please see LICENSE files in the repository root for full details.
 
 import SdkConfig from "./SdkConfig.ts";
 
-const ELEMENT_BRAND = "Element";
+const ELEMENT_BRAND = "Yaung Ni Oo";
 
 /**
  * Returns whether the app is currently branded.

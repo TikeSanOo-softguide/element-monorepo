@@ -3937,8 +3937,8 @@
     },
     "web_default_device_name": "%(appName)s: %(browserName)s on %(osName)s",
     "welcome": {
-        "tagline_element": "Supercharged for speed and simplicity.",
-        "title_element": "Be in your element",
+        "tagline_element": "The fastest and most reliable internet.",
+        "title_element": "Yaung Ni Oo",
         "title_generic": "Welcome to %(brand)s"
     },
     "widget": {
