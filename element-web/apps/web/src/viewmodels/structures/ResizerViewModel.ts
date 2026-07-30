@@ -18,9 +18,11 @@ import { debounce } from "lodash";
 
 import SettingsStore from "../../settings/SettingsStore";
 import { SettingLevel } from "../../settings/SettingLevel";
+import { isMobileLayout } from "../../utils/device/isMobileLayout.ts";
+
 
 function getInitialState(): ResizerViewSnapshot {
-    if (SettingsStore.getValue("RoomList.isPanelCollapsed")) {
+    if (!isMobileLayout() && SettingsStore.getValue("RoomList.isPanelCollapsed")) {
         return {
             isCollapsed: true,
             initialSize: 0,
@@ -37,8 +39,7 @@ function getInitialState(): ResizerViewSnapshot {
  */
 export class ResizerViewModel
     extends BaseViewModel<ResizerViewSnapshot, void>
-    implements SeparatorViewActions, LeftResizablePanelViewActions, GroupViewActions
-{
+    implements SeparatorViewActions, LeftResizablePanelViewActions, GroupViewActions {
     /**
      * This object gives us access to the API methods of react-resizable-panels library.
      */
@@ -115,7 +116,7 @@ export class ResizerViewModel
  * on the separator.
  */
 class MouseClickHandler {
-    public constructor(private readonly onClick: () => void) {}
+    public constructor(private readonly onClick: () => void) { }
 
     private isResize = false;
 

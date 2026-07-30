@@ -141,6 +141,11 @@ const useSearchInput = (
         if (searchInputRef.current && e.key === Key.ESCAPE) {
             searchInputRef.current.value = "";
             onSearchCancel?.();
+        } else if (searchInputRef.current && e.key === Key.ENTER) {
+            defaultDispatcher.dispatch({
+                action: Action.MessageSearched,
+                keyboardEvent: e
+            });
         }
     };
 

@@ -66,6 +66,7 @@ import { Landmark, LandmarkNavigation } from "../../accessibility/LandmarkNaviga
 import { ModuleApi } from "../../modules/Api.ts";
 import { SDKContext } from "../../contexts/SDKContext.ts";
 import { ResizerViewModel } from "../../viewmodels/structures/ResizerViewModel.ts";
+import { isMobileLayout } from "../../utils/device/isMobileLayout.ts";
 
 // We need to fetch each pinned message individually (if we don't already have it)
 // so each pinned message may trigger a request. Limit the number per room for sanity.
@@ -139,6 +140,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             useCompactLayout: SettingsStore.getValue("useCompactLayout"),
             usageLimitDismissed: false,
             activeCalls: LegacyCallHandler.instance.getAllActiveCalls(),
+            roomEntered: false,
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -147,6 +149,42 @@ class LoggedInView extends React.Component<IProps, IState> {
         MediaDeviceHandler.loadDevices();
 
         this._roomView = React.createRef();
+
+        dis.register(this.onDispatch);
+    }
+
+
+    private onDispatch = (payload: any): void => {
+        switch (payload.action) {
+            case Action.RoomEntered: {
+                this.state.roomEntered = true;
+                break;
+            }
+            case Action.RoomExited: {
+                this.state.roomEntered = false;
+                break;
+            }
+        }
+        this.controlDisplay();
+    };
+
+    private controlDisplay = (): void => {
+        let spacePanel = document.querySelector('.mx_SpacePanel') as HTMLDivElement | null;
+        let roomListPanel = document.querySelector('.mx_RoomList_panel') as HTMLDivElement | null;
+        let messagePanel = document.querySelector('.mx_Message_panel') as HTMLDivElement | null;
+        let roomListPanelWrapper = roomListPanel?.parentElement
+        let messagePanelWrapper = messagePanel?.parentElement
+        if (isMobileLayout()) {
+            if (this.state.roomEntered) {
+                spacePanel?.classList.add('mx_hidden')
+                roomListPanelWrapper?.classList.add('mx_hidden')
+                messagePanelWrapper?.classList.remove('mx_hidden')
+            } else {
+                spacePanel?.classList.remove('mx_hidden')
+                roomListPanelWrapper?.classList.remove('mx_hidden')
+                messagePanelWrapper?.classList.add('mx_hidden')
+            }
+        }
     }
 
     public componentDidMount(): void {
@@ -185,6 +223,7 @@ class LoggedInView extends React.Component<IProps, IState> {
 
         OwnProfileStore.instance.on(UPDATE_EVENT, this.refreshBackgroundImage);
         this.refreshBackgroundImage();
+        this.controlDisplay();
     }
 
     private getResizerViewModel(): ResizerViewModel {
@@ -702,15 +741,15 @@ class LoggedInView extends React.Component<IProps, IState> {
                     <SpacePanel />
                     <LeftResizablePanelView
                         vm={resizerViewModel}
-                        className="mx_LeftPanel_panel"
+                        className="mx_LeftPanel_panel mx_RoomList_panel"
                         minSize="200px"
                         maxSize="370px"
                         defaultSize="370px"
                     >
                         {leftPanel}
                     </LeftResizablePanelView>
-                    <SeparatorView className="mx_Separator" vm={resizerViewModel} />
-                    <Panel className="mx_LeftPanel_panel">{roomView}</Panel>
+                    {!isMobileLayout() && <SeparatorView className="mx_Separator" vm={resizerViewModel} />}
+                    <Panel className="mx_LeftPanel_panel mx_Message_panel">{roomView}</Panel>
                 </GroupView>
             );
         } else {

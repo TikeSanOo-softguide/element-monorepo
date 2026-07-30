@@ -6,7 +6,7 @@
  *
  */
 
-import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, esmExternalRequirePlugin, type Plugin } from "vite";
@@ -22,21 +22,14 @@ const cssAssetFileName = "element-web-shared-components.css";
 function layerCssAssets(): Plugin {
     return {
         name: "element-web-shared-components-css-layer",
-        // Rename + layer-wrap the emitted CSS file. With multi-entry lib mode,
-        // vite/rolldown derives CSS filenames from the unscoped package name (dropping
-        // the `element-` prefix), so we rename on disk to keep the path stable for
-        // consumers importing `@element-hq/web-shared-components/.../*.css`.
+        // Layer-wrap the emitted CSS. Filename is forced via assetFileNames so the
+        // package exports path exists as soon as Vite writes the file (no rename race).
         writeBundle(options): void {
             const outDir = options.dir ?? resolve(__dirname, "dist");
             const expectedPath = resolve(outDir, cssAssetFileName);
-            const renamedFromPath = resolve(outDir, "web-shared-components.css");
-
-            if (existsSync(renamedFromPath)) {
-                renameSync(renamedFromPath, expectedPath);
-            }
 
             // No CSS emitted in this build (e.g. storybook's vite build doesn't produce
-            // the library CSS bundle), or already renamed and layered on a prior pass.
+            // the library CSS bundle), or already layered on a prior pass.
             if (!existsSync(expectedPath)) return;
 
             const source = readFileSync(expectedPath, "utf-8");
@@ -65,6 +58,9 @@ export default defineConfig({
             fileName: (format, entryName) => `${entryName}.${format === "es" ? "js" : "umd.cjs"}`,
         },
         outDir: "dist",
+        // Keep previous dist files until new ones overwrite them so webpack never
+        // resolves a missing exports path mid-rebuild.
+        emptyOutDir: false,
         rolldownOptions: {
             // make sure to externalize deps that shouldn't be bundled
             // into your library
@@ -80,6 +76,16 @@ export default defineConfig({
                 }),
             ],
             output: {
+                // Force CSS to the stable package export path. Without this, multi-entry
+                // lib mode emits `web-shared-components.css` and a post-write rename
+                // races with webpack resolving the exports path.
+                assetFileNames: (assetInfo) => {
+                    const name = assetInfo.names?.[0] ?? assetInfo.name ?? "";
+                    if (String(name).endsWith(".css")) {
+                        return cssAssetFileName;
+                    }
+                    return "[name][extname]";
+                },
                 // Provide global variables to use in the UMD build
                 // for externalized deps
                 globals: {

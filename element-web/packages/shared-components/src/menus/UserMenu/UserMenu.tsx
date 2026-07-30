@@ -170,7 +170,7 @@ export function UserMenuView({ vm, className }: UserMenuViewProps): JSX.Element 
                 side="right"
                 className={styles.container}
             >
-                <section className={styles.profile}>
+                <section className={`${styles.profile} mx_ProfileDrawer`}>
                     {showAvatar && <Avatar id={userId} name={displayName} type="round" size="64px" src={avatarUrl} />}
                     <Text className={styles.displayname} type="body" size="lg" weight="semibold" as="span">
                         {displayName}

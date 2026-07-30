@@ -2,7 +2,7 @@
 <html lang="en" style="height: 100%;">
   <head>
     <meta charset="utf-8">
-    <title>Yaung Ni Oo</title>
+    <title>Teak Chat</title>
     <link rel="apple-touch-icon" sizes="120x120" href="<%= require('../../res/vector-icons/120.png') %>">
     <link rel="apple-touch-icon" sizes="144x144" href="<%= require('../../res/vector-icons/144.png') %>">
     <link rel="apple-touch-icon" sizes="152x152" href="<%= require('../../res/vector-icons/152.png') %>">
@@ -13,8 +13,8 @@
     <link rel="icon" type="image/png" sizes="144x144" href="<%= require('../../res/vector-icons/144.png') %>">
     <link rel="icon" type="image/png" sizes="512x512" href="<%= require('../../res/vector-icons/512.png') %>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="apple-mobile-web-app-title" content="Yaung Ni Oo">
-    <meta name="application-name" content="Yaung Ni Oo">
+    <meta name="apple-mobile-web-app-title" content="Teak Chat">
+    <meta name="application-name" content="Teak Chat">
     <meta name="theme-color" content="#ffffff">
     <meta property="og:image" content="<%= og_image_url %>" />
     <meta http-equiv="Content-Security-Policy" content="
@@ -42,7 +42,6 @@
            <link rel="stylesheet" href="<%= file %>">
         <% }
     } %>
-
     <% for (const tag of htmlWebpackPlugin.tags.headTags) {
         let path = tag.attributes && tag.attributes.href;
         if (path && path.includes("/Inter/")) { %>
@@ -64,7 +63,6 @@
         }
     }
 %>
-    // Disable mobile guide redirect permanently
     <script>
         document.cookie = "element_mobile_redirect_to_guide=false;path=/;max-age=2592000";
     </script>

@@ -69,7 +69,23 @@ export default class RightPanel extends React.Component<Props, IState> {
         super(props);
 
         this.state = RightPanel.getDerivedStateFromProps(props);
+        dis.register(this.onDispatch);
     }
+
+    private onDispatch = (payload: any): void => {
+        switch (payload.action) {
+            case Action.MessageSearched: {
+                this.closeRightPanel(payload.keyboardEvent)
+                break;
+            }
+        }
+    };
+
+    private closeRightPanel = (ev: KeyboardEvent): void => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        RightPanelStore.instance.popCard();
+    };
 
     private readonly delayedUpdate = throttle(
         (): void => {

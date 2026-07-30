@@ -23,6 +23,7 @@ import { type ViewRoomOpts } from "@matrix-org/react-sdk-module-api/lib/lifecycl
 import { Flex, Box } from "@element-hq/web-shared-components";
 import { CallType } from "matrix-js-sdk/src/webrtc/call";
 import { HistoryIcon, UserProfileSolidIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
+import { ChevronLeftIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import { useRoomName } from "../../../../hooks/useRoomName.ts";
 import { RightPanelPhases } from "../../../../stores/right-panel/RightPanelStorePhases.ts";
@@ -57,6 +58,9 @@ import { ToggleableIcon } from "./toggle/ToggleableIcon.tsx";
 import { CurrentRightPanelPhaseContextProvider } from "../../../../contexts/CurrentRightPanelPhaseContext.tsx";
 import { LocalRoom } from "../../../../models/LocalRoom.ts";
 import { useIsEncrypted } from "../../../../hooks/useIsEncrypted.ts";
+import AccessibleButton from "../../elements/AccessibleButton";
+import { Action } from "../../../../dispatcher/actions";
+import { isMobileLayout } from "../../../../utils/device/isMobileLayout.ts";
 
 function RoomHeaderButtons({
     room,
@@ -200,7 +204,7 @@ function RoomHeaderButtons({
                                     videoCallClick(ev, option);
                                 }}
                                 Icon={VideoCallIcon}
-                                onSelect={() => {} /* Dummy handler since we want the click event.*/}
+                                onSelect={() => { } /* Dummy handler since we want the click event.*/}
                             />
                         );
                     })}
@@ -249,7 +253,7 @@ function RoomHeaderButtons({
                                     voiceCallClick(ev, option);
                                 }}
                                 Icon={VoiceCallIcon}
-                                onSelect={() => {} /* Dummy handler since we want the click event.*/}
+                                onSelect={() => { } /* Dummy handler since we want the click event.*/}
                             />
                         );
                     })}
@@ -331,20 +335,21 @@ function RoomHeaderButtons({
             )}
 
             {showChatButton && <VideoRoomChatButton room={room} />}
-
-            <Tooltip label={_t("common|threads")}>
-                <IconButton
-                    indicator={notificationLevelToIndicator(threadNotifications)}
-                    onClick={(evt) => {
-                        evt.stopPropagation();
-                        RightPanelStore.instance.showOrHidePhase(RightPanelPhases.ThreadPanel);
-                        PosthogTrackers.trackInteraction("WebRoomHeaderButtonsThreadsButton", evt);
-                    }}
-                    aria-label={_t("common|threads")}
-                >
-                    <ToggleableIcon Icon={ThreadsIcon} phase={RightPanelPhases.ThreadPanel} />
-                </IconButton>
-            </Tooltip>
+            {!isMobileLayout() &&
+                (<Tooltip label={_t("common|threads")}>
+                    <IconButton
+                        indicator={notificationLevelToIndicator(threadNotifications)}
+                        onClick={(evt) => {
+                            evt.stopPropagation();
+                            RightPanelStore.instance.showOrHidePhase(RightPanelPhases.ThreadPanel);
+                            PosthogTrackers.trackInteraction("WebRoomHeaderButtonsThreadsButton", evt);
+                        }}
+                        aria-label={_t("common|threads")}
+                    >
+                        <ToggleableIcon Icon={ThreadsIcon} phase={RightPanelPhases.ThreadPanel} />
+                    </IconButton>
+                </Tooltip>
+                )}
             {notificationsEnabled && (
                 <Tooltip label={_t("notifications|enable_prompt_toast_title")}>
                     <IconButton
@@ -372,7 +377,7 @@ function RoomHeaderButtons({
                 </IconButton>
             </Tooltip>
 
-            {!isDirectMessage && (
+            {(!isDirectMessage && !isMobileLayout()) && (
                 <Text as="div" size="sm" weight="medium">
                     <FacePile
                         className="mx_RoomHeader_members"
@@ -457,10 +462,26 @@ export default function RoomHeader({
             initial_tab_id: RoomSettingsTab.General,
         });
     };
+    const onBackClick = (): void => {
+        defaultDispatcher.dispatch({
+            action: Action.RoomExited,
+            state: true
+        })
+    };
+
 
     return (
         <CurrentRightPanelPhaseContextProvider roomId={room.roomId}>
             <Flex as="header" align="center" gap="var(--cpd-space-3x)" className="mx_RoomHeader light-panel">
+                {isMobileLayout() && <AccessibleButton
+                    onClick={onBackClick}
+                    className="mx_RoomHeader_backButton"
+                    title={_t("action|close")}
+                    aria-label={_t("room_close_label")}
+                    placement="bottom"
+                >
+                    <ChevronLeftIcon />
+                </AccessibleButton>}
                 <WithPresenceIndicator room={room}>
                     {/* We hide this from the tabIndex list as it is a pointer shortcut and superfluous for a11y */}
                     {/* Disable on-click actions until the room is created */}
