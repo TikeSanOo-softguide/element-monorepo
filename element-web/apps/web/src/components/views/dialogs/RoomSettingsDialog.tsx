@@ -45,6 +45,7 @@ import { PeopleRoomSettingsTab } from "../settings/tabs/room/PeopleRoomSettingsT
 import { SDKContext } from "../../../contexts/SDKContext";
 import { type SDKContextClass } from "../../../contexts/SDKContextClass";
 import { RoomSettingsTab } from "./RoomSettingsDialog-tab.ts";
+import { isMobileLayout } from "../../../utils/device/isMobileLayout.ts";
 
 interface IProps {
     roomId: string;
@@ -56,6 +57,7 @@ interface IProps {
 interface IState {
     room: Room;
     activeTabId: RoomSettingsTab;
+    activeTabShown: boolean;
 }
 
 class RoomSettingsDialog extends React.Component<IProps, IState> {
@@ -65,7 +67,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
         super(props);
 
         const room = this.getRoom();
-        this.state = { room, activeTabId: props.initialTabId || RoomSettingsTab.General };
+        this.state = { room, activeTabId: props.initialTabId || RoomSettingsTab.General, activeTabShown: false };
     }
 
     public componentDidMount(): void {
@@ -122,7 +124,12 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
     };
 
     private onTabChange = (tabId: RoomSettingsTab): void => {
+        this.setState({ activeTabShown: true });
         this.setState({ activeTabId: tabId });
+    };
+
+    private backToTabLabels = (): void => {
+        this.setState({ activeTabShown: false });
     };
 
     private getTabs(): NonEmptyArray<Tab<RoomSettingsTab>> {
@@ -229,24 +236,30 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
 
     public render(): React.ReactNode {
         const roomName = this.state.room.name;
+        const title = isMobileLayout() ?
+            _t("room_settings|title_no_room_name") :
+            _t("room_settings|title", { roomName })
         return (
             <SDKContext.Provider value={this.props.sdkContext}>
                 <BaseDialog
-                    className="mx_RoomSettingsDialog"
+                    className={`mx_RoomSettingsDialog ${isMobileLayout() && this.state.activeTabShown ? "hideDialogTitle" : ""}`}
+                    hasBack={isMobileLayout() && this.state.activeTabShown}
                     hasCancel={true}
+                    onReturned={this.backToTabLabels}
                     onFinished={this.props.onFinished}
-                    title={_t("room_settings|title", { roomName })}
+                    title={title}
                 >
                     <div className="mx_SettingsDialog_content">
                         <TabbedView
                             tabs={this.getTabs()}
+                            activeTabShown={this.state.activeTabShown}
                             activeTabId={this.state.activeTabId}
                             screenName="RoomSettings"
                             onChange={this.onTabChange}
                         />
                     </div>
                 </BaseDialog>
-            </SDKContext.Provider>
+            </SDKContext.Provider >
         );
     }
 }

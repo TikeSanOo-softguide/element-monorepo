@@ -28,6 +28,7 @@ import AdvancedRoomSettingsTab from "../settings/tabs/room/AdvancedRoomSettingsT
 import RolesRoomSettingsTab from "../settings/tabs/room/RolesRoomSettingsTab";
 import { Action } from "../../../dispatcher/actions";
 import { type NonEmptyArray } from "../../../@types/common";
+import { isMobileLayout } from "../../../utils/device/isMobileLayout";
 
 export enum SpaceSettingsTab {
     General = "SPACE_GENERAL_TAB",
@@ -71,27 +72,39 @@ const SpaceSettingsDialog: React.FC<IProps> = ({ matrixClient: cli, space, onFin
             ),
             SettingsStore.getValue(UIFeature.AdvancedSettings)
                 ? new Tab(
-                      SpaceSettingsTab.Advanced,
-                      _td("common|advanced"),
-                      <AdvancedSettingsIcon />,
-                      <AdvancedRoomSettingsTab room={space} closeSettingsFn={onFinished} />,
-                  )
+                    SpaceSettingsTab.Advanced,
+                    _td("common|advanced"),
+                    <AdvancedSettingsIcon />,
+                    <AdvancedRoomSettingsTab room={space} closeSettingsFn={onFinished} />,
+                )
                 : null,
         ].filter(Boolean) as NonEmptyArray<Tab<SpaceSettingsTab>>;
     }, [cli, space, onFinished]);
 
     const [activeTabId, setActiveTabId] = React.useState(SpaceSettingsTab.General);
+    const [activeTabShown, setActiveTabShown] = React.useState(false);
+
+    const backToTabLabels = (): void => {
+        setActiveTabShown(false);
+    };
+
+    const onTabChange = (value) => {
+        setActiveTabId(value);
+        setActiveTabShown(true);
+    }
 
     return (
         <BaseDialog
             title={_t("space_settings|title", { spaceName: space.name || _t("common|unnamed_space") })}
-            className="mx_SpaceSettingsDialog"
+            className={`mx_SpaceSettingsDialog ${isMobileLayout() && activeTabShown ? "hideDialogTitle" : ""}`}
             contentId="mx_SpaceSettingsDialog"
+            hasBack={isMobileLayout() && activeTabShown}
+            onReturned={backToTabLabels}
             onFinished={onFinished}
             fixedWidth={false}
         >
             <div className="mx_SpaceSettingsDialog_content" id="mx_SpaceSettingsDialog">
-                <TabbedView tabs={tabs} activeTabId={activeTabId} onChange={setActiveTabId} />
+                <TabbedView tabs={tabs} activeTabId={activeTabId} activeTabShown={activeTabShown} onChange={onTabChange} />
             </div>
         </BaseDialog>
     );

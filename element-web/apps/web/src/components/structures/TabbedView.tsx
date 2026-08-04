@@ -17,6 +17,7 @@ import { PosthogScreenTracker, type ScreenName } from "../../PosthogTrackers";
 import { type NonEmptyArray } from "../../@types/common";
 import { RovingAccessibleButton, RovingTabIndexProvider } from "../../accessibility/RovingTabIndex";
 import { useWindowWidth } from "../../hooks/useWindowWidth";
+import { isMobileLayout } from "../../utils/device/isMobileLayout.ts";
 
 /**
  * Represents a tab for the TabbedView.
@@ -38,7 +39,7 @@ export class Tab<T extends string> {
         public readonly body: JSX.Element,
         public readonly screenName?: ScreenName,
         public readonly labelClassName?: string,
-    ) {}
+    ) { }
 }
 
 export function useActiveTabWithDefault<T extends string>(
@@ -126,6 +127,8 @@ interface IProps<T extends string> {
     tabs: NonEmptyArray<Tab<T>>;
     // The ID of the tab to show
     activeTabId: T;
+    // The active tab is shown
+    activeTabShown?: boolean;
     // The location of the tabs, dictating the layout of the TabbedView.
     tabLocation?: TabLocation;
     // A callback that is called when the active tab should change
@@ -179,24 +182,26 @@ export default function TabbedView<T extends string>(props: IProps<T>): JSX.Elem
     return (
         <div className={tabbedViewClasses}>
             {screenName && <PosthogScreenTracker screenName={screenName} />}
-            <RovingTabIndexProvider
-                handleLoop
-                handleHomeEnd
-                handleLeftRight={tabLocation == TabLocation.TOP}
-                handleUpDown={tabLocation == TabLocation.LEFT}
-            >
-                {({ onKeyDownHandler }) => (
-                    <ul
-                        className="mx_TabbedView_tabLabels"
-                        role="tablist"
-                        aria-orientation={tabLocation == TabLocation.LEFT ? "vertical" : "horizontal"}
-                        onKeyDown={onKeyDownHandler}
-                    >
-                        {labels}
-                    </ul>
-                )}
-            </RovingTabIndexProvider>
-            {panel}
+            {(!isMobileLayout() || !props.activeTabShown) && (
+                <RovingTabIndexProvider
+                    handleLoop
+                    handleHomeEnd
+                    handleLeftRight={tabLocation == TabLocation.TOP}
+                    handleUpDown={tabLocation == TabLocation.LEFT}
+                >
+                    {({ onKeyDownHandler }) => (
+                        <ul
+                            className="mx_TabbedView_tabLabels"
+                            role="tablist"
+                            aria-orientation={tabLocation == TabLocation.LEFT ? "vertical" : "horizontal"}
+                            onKeyDown={onKeyDownHandler}
+                        >
+                            {labels}
+                        </ul>
+                    )}
+                </RovingTabIndexProvider>
+            )}
+            {(!isMobileLayout() || props.activeTabShown) && panel}
         </div>
     );
 }

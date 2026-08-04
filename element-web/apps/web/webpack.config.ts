@@ -65,6 +65,10 @@ const cssThemes = {
     "theme-dark-custom": "./res/themes/dark-custom/css/dark-custom.pcss",
 };
 
+const customize = {
+    "customize": "./res/css/customize/customize.pcss",
+};
+
 // See docs/customisations.md
 let fileOverrides = {
     /* {[file: string]: string} */
@@ -177,6 +181,7 @@ export default (env: string, argv: Record<string, any>): webpack.Configuration =
                 filename: "sw.js", // update WebPlatform if this changes
             },
             ...cssThemes,
+            ...customize,
         },
 
         optimization: {
@@ -216,20 +221,20 @@ export default (env: string, argv: Record<string, any>): webpack.Configuration =
             minimize: enableMinification,
             minimizer: enableMinification
                 ? [
-                      new TerserPlugin({
-                          exclude: [
-                              // Already minified and includes an auto-generated license comment
-                              // that the plugin would otherwise pointlessly extract into a separate
-                              // file. We add the actual license using CopyWebpackPlugin below.
-                              "jitsi_external_api.min.js",
-                              // Already minified by Element Call's build process (and Terser has
-                              // issues with some Unicode characters found within)
-                              // https://github.com/terser/terser/issues/1677
-                              "widgets/element-call/",
-                          ],
-                      }),
-                      new CssMinimizerPlugin(),
-                  ]
+                    new TerserPlugin({
+                        exclude: [
+                            // Already minified and includes an auto-generated license comment
+                            // that the plugin would otherwise pointlessly extract into a separate
+                            // file. We add the actual license using CopyWebpackPlugin below.
+                            "jitsi_external_api.min.js",
+                            // Already minified by Element Call's build process (and Terser has
+                            // issues with some Unicode characters found within)
+                            // https://github.com/terser/terser/issues/1677
+                            "widgets/element-call/",
+                        ],
+                    }),
+                    new CssMinimizerPlugin(),
+                ]
                 : [],
 
             // Set the value of `process.env.NODE_ENV` for libraries like React

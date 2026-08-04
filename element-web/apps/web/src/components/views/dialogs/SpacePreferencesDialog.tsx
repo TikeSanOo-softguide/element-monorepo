@@ -23,6 +23,7 @@ import SettingsTab from "../settings/tabs/SettingsTab";
 import { SettingsSection } from "../settings/shared/SettingsSection";
 import { SettingsSubsection, SettingsSubsectionText } from "../settings/shared/SettingsSubsection";
 import { useRoomName } from "../../../hooks/useRoomName.ts";
+import { isMobileLayout } from "../../../utils/device/isMobileLayout.ts";
 
 interface IProps {
     space: Room;
@@ -69,18 +70,29 @@ const SpacePreferencesDialog: React.FC<IProps> = ({ space, onFinished }) => {
             <SpacePreferencesAppearanceTab space={space} />,
         ),
     ];
+    const [activeTabShown, setActiveTabShown] = React.useState(false);
+
+    const backToTabLabels = (): void => {
+        setActiveTabShown(false);
+    };
+
+    const onTabChange = () => {
+        setActiveTabShown(true);
+    }
 
     return (
         <BaseDialog
-            className="mx_SpacePreferencesDialog"
+            className={`mx_SpacePreferencesDialog ${isMobileLayout() && activeTabShown ? "hideDialogTitle" : ""}`}
             hasCancel
+            hasBack={isMobileLayout() && activeTabShown}
+            onReturned={backToTabLabels}
             onFinished={onFinished}
             title={_t("common|preferences")}
             fixedWidth={false}
         >
             <h4>{name}</h4>
             <div className="mx_SettingsDialog_content">
-                <TabbedView tabs={tabs} activeTabId={SpacePreferenceTab.Appearance} onChange={() => {}} />
+                <TabbedView tabs={tabs} activeTabId={SpacePreferenceTab.Appearance} activeTabShown={activeTabShown} onChange={onTabChange} />
             </div>
         </BaseDialog>
     );

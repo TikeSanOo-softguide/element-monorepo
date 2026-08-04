@@ -1,0 +1,34 @@
+@media (max-width: 450px) {
+    .mx_LegacyCallEvent.mx_LegacyCallEvent_voice.mx_LegacyCallEvent_narrow {
+        min-width: 100%;
+    }
+
+    .mx_EventTile_line:has(.mx_EventTileBubble.mx_cryptoEvent) {
+        width: 100%;
+    }
+
+    .mx_EventTile_line:has(.mx_LegacyCallEvent_wrapper),
+    .mx_EventTile_line:has(.mx_DecryptionFailureBody) {
+        margin-right: 50px;
+    }
+
+    .mx_NewRoomIntro {
+        width: 70%;
+    }
+
+    .mx_NewRoomIntro:has(.mx_EventTileBubble.mx_cryptoEvent) {
+        width: 70%;
+
+        .mx_EventTileBubble.mx_cryptoEvent {
+            max-width: none;
+            margin-bottom: 40px;
+            margin-left: -18px;
+        }
+    }
+}
+
+@media (max-width: 415px) {
+    .mx_PinnedMessageBanner_actions {
+        padding-inline: 0 !important;
+    }
+}

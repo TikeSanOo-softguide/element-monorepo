@@ -59,8 +59,7 @@ interface RoomItemProps {
  */
 export class RoomListItemViewModel
     extends BaseViewModel<RoomListItemViewSnapshot, RoomItemProps>
-    implements RoomListItemViewActions
-{
+    implements RoomListItemViewActions {
     private notifState: RoomNotificationState;
     /**
      * Track the current call for this room to manager listeners
@@ -354,6 +353,9 @@ export class RoomListItemViewModel
     }
 
     public onOpenRoom = (): void => {
+        dispatcher.dispatch({
+            action: Action.RoomEntered,
+        })
         dispatcher.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             room_id: this.props.room.roomId,

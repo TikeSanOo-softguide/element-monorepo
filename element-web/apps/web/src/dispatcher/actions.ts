@@ -398,6 +398,8 @@ export enum Action {
      */
     FocusMessageSearch = "focus_search",
 
+    MessageSearched = "message_searched",
+
     /**
      * Open the direct message dialog
      */
@@ -429,4 +431,8 @@ export enum Action {
      * Payload: {@link RoomListSectionsCollapseStateChangedPayload}
      */
     RoomListSectionsCollapseStateChanged = "room_list_sections_collapse_state_changed",
+
+    RoomEntered = 'room_entered',
+
+    RoomExited = 'room_exited',
 }

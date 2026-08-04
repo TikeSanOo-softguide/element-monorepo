@@ -1,0 +1,52 @@
+@define-mixin customisedBackButton {
+    width: 20px;
+    height: 20px;
+    padding: var(--cpd-space-1x);
+    border-radius: 14px;
+    background-color: var(--cpd-color-bg-subtle-secondary);
+
+    &:hover {
+        background-color: var(--cpd-color-bg-subtle-primary);
+    }
+
+    svg {
+        width: inherit;
+        height: inherit;
+        vertical-align: top;
+        color: var(--cpd-color-icon-secondary);
+    }
+}
+
+.mx_Dialog_backButton {
+    @mixin customisedBackButton;
+    position: absolute;
+    top: var(--cpd-space-4x);
+    left: var(--cpd-space-4x);
+}
+
+.mx_RoomHeader_backButton {
+    @mixin customisedBackButton;
+}
+
+.hideDialogTitle .mx_Dialog_header .mx_Dialog_title {
+    visibility: hidden;
+}
+
+.mx_hidden {
+    display: none!important;
+}
+
+@media (max-width: 535px) {
+    .mx_Dialog_buttons {
+        width: 100%;
+
+        .mx_Dialog_buttons_row {
+            justify-content: flex-start;
+
+            button {
+                min-width: 0;
+                padding: 7px 16px;
+            }
+        }
+    }
+}

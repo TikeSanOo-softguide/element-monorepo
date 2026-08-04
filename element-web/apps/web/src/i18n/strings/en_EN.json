@@ -2369,6 +2369,7 @@
             "title": "Security & Privacy"
         },
         "title": "Room Settings - %(roomName)s",
+        "title_no_room_name": "Room Settings",
         "upload_avatar_label": "Upload avatar",
         "visibility": {
             "alias_section": "Address",
@@ -3938,7 +3939,7 @@
     "web_default_device_name": "%(appName)s: %(browserName)s on %(osName)s",
     "welcome": {
         "tagline_element": "The fastest and most reliable internet.",
-        "title_element": "Yaung Ni Oo",
+        "title_element": "Teak Chat",
         "title_generic": "Welcome to %(brand)s"
     },
     "widget": {

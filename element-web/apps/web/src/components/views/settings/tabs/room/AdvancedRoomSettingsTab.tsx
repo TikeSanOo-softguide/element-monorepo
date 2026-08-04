@@ -159,7 +159,7 @@ export default class AdvancedRoomSettingsTab extends React.Component<IProps, ISt
                     >
                         <div>
                             <span>{_t("room_settings|advanced|room_id")}</span>
-                            <CopyableText getTextToCopy={() => this.props.room.roomId}>
+                            <CopyableText className="mx_AdvancedSettingsCopyableText" getTextToCopy={() => this.props.room.roomId}>
                                 {this.props.room.roomId}
                             </CopyableText>
                         </div>

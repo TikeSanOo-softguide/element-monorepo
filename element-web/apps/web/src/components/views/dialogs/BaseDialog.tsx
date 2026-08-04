@@ -14,6 +14,7 @@ import classNames from "classnames";
 import { type MatrixClient } from "matrix-js-sdk/src/matrix";
 import { I18nContext } from "@element-hq/web-shared-components";
 import { CloseIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
+import { ChevronLeftIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import AccessibleButton from "../elements/AccessibleButton";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
@@ -37,12 +38,16 @@ interface IProps {
      */
     "hasCancel"?: boolean;
 
+    "hasBack"?: boolean;
+
     /**
      * Callback that will be called when the 'close' button is clicked or 'Escape' is pressed.
      *
      * Not used if `hasCancel` is false.
      */
     "onFinished"?: () => void;
+
+    "onReturned"?: () => void;
 
     // called when a key is pressed
     "onKeyDown"?: (e: KeyboardEvent | React.KeyboardEvent) => void;
@@ -98,6 +103,7 @@ export default class BaseDialog extends React.Component<IProps> {
     public static defaultProps: Partial<IProps> = {
         hasCancel: true,
         fixedWidth: true,
+        hasBack: false,
     };
 
     public constructor(props: IProps) {
@@ -129,6 +135,10 @@ export default class BaseDialog extends React.Component<IProps> {
         this.props.onFinished?.();
     };
 
+    private onBackClick = (): void => {
+        this.props.onReturned?.();
+    };
+
     public render(): React.ReactNode {
         let cancelButton;
         if (this.props.hasCancel) {
@@ -141,6 +151,20 @@ export default class BaseDialog extends React.Component<IProps> {
                     placement="bottom"
                 >
                     <CloseIcon />
+                </AccessibleButton>
+            );
+        }
+        let backButton;
+        if (this.props.hasBack) {
+            backButton = (
+                <AccessibleButton
+                    onClick={this.onBackClick}
+                    className="mx_Dialog_backButton"
+                    title={_t("action|close")}
+                    aria-label={_t("dialog_close_label")}
+                    placement="bottom"
+                >
+                    <ChevronLeftIcon />
                 </AccessibleButton>
             );
         }
@@ -185,6 +209,7 @@ export default class BaseDialog extends React.Component<IProps> {
                         })}
                     >
                         {this.props.top}
+                        {backButton}
                         <div
                             className={classNames("mx_Dialog_header", {
                                 mx_Dialog_headerWithButton: !!this.props.headerButton,
