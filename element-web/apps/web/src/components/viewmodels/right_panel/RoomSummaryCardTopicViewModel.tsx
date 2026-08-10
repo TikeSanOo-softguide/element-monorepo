@@ -11,6 +11,7 @@ import { useRoomState } from "../../../hooks/useRoomState";
 import defaultDispatcher from "../../../dispatcher/dispatcher";
 import { onRoomTopicLinkClick } from "../../views/elements/RoomTopic";
 import { useTopic } from "../../../hooks/room/useTopic";
+import { RoomSettingsTab } from "../../views/dialogs/RoomSettingsDialog-tab";
 
 export interface RoomTopicState {
     /**
@@ -56,7 +57,7 @@ export function useRoomTopicViewModel(room: Room): RoomTopicState {
     const onEditClick = (e: SyntheticEvent): void => {
         e.preventDefault();
         e.stopPropagation();
-        defaultDispatcher.dispatch({ action: "open_room_settings" });
+        defaultDispatcher.dispatch({ action: "open_room_settings", initial_tab_id: RoomSettingsTab.General });
     };
 
     const onExpandedClick = (e: SyntheticEvent): void => {

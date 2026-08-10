@@ -67,7 +67,7 @@ class RoomSettingsDialog extends React.Component<IProps, IState> {
         super(props);
 
         const room = this.getRoom();
-        this.state = { room, activeTabId: props.initialTabId || RoomSettingsTab.General, activeTabShown: false };
+        this.state = { room, activeTabId: props.initialTabId || RoomSettingsTab.General, activeTabShown: !!props.initialTabId };
     }
 
     public componentDidMount(): void {

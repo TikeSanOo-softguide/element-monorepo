@@ -220,6 +220,9 @@ const SpaceContextMenu: React.FC<IProps> = ({ space, hideHeader, onFinished, ...
         ev.preventDefault();
         ev.stopPropagation();
 
+        defaultDispatcher.dispatch({
+            action: Action.RoomEntered,
+        });
         defaultDispatcher.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             room_id: space.roomId,

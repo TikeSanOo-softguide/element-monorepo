@@ -164,6 +164,7 @@ export const useUserInfoBasicViewModel = (room: Room, member: User | RoomMember)
             description: <div>{_t("user_info|deactivate_confirm_description")}</div>,
             button: _t("user_info|deactivate_confirm_action"),
             danger: true,
+            className: "mx_UserInfoDeactivateDialog",
         });
 
         const [accepted] = await finished;

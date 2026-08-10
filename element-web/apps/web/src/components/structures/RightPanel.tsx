@@ -34,6 +34,7 @@ import { Action } from "../../dispatcher/actions";
 import { type XOR } from "../../@types/common";
 import ExtensionsCard from "../views/right_panel/ExtensionsCard";
 import MemberListView from "../views/rooms/MemberList/MemberListView";
+import { isMobileLayout } from "../../utils/device/isMobileLayout";
 
 interface BaseProps {
     overwriteCard?: IRightPanelCard; // used to display a custom card and ignoring the RightPanelStore (used for UserView)
@@ -74,17 +75,20 @@ export default class RightPanel extends React.Component<Props, IState> {
 
     private onDispatch = (payload: any): void => {
         switch (payload.action) {
-            case Action.MessageSearched: {
-                this.closeRightPanel(payload.keyboardEvent)
+            case Action.MessageSearched:
+            case Action.CloseRightPanel: {
+                if (isMobileLayout()) {
+                    this.closeRightPanel(payload.keyboardEvent)
+                }
                 break;
             }
         }
     };
 
-    private closeRightPanel = (ev: KeyboardEvent): void => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        RightPanelStore.instance.popCard();
+    private closeRightPanel = (ev?: KeyboardEvent): void => {
+        ev?.preventDefault();
+        ev?.stopPropagation();
+        RightPanelStore.instance.hide(null);
     };
 
     private readonly delayedUpdate = throttle(

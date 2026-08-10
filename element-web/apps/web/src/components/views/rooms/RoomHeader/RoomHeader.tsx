@@ -465,7 +465,6 @@ export default function RoomHeader({
     const onBackClick = (): void => {
         defaultDispatcher.dispatch({
             action: Action.RoomExited,
-            state: true
         })
     };
 

@@ -435,4 +435,6 @@ export enum Action {
     RoomEntered = 'room_entered',
 
     RoomExited = 'room_exited',
+
+    CloseRightPanel = 'close_right_panel',
 }

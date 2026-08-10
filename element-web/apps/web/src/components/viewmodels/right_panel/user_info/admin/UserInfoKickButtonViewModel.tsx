@@ -58,14 +58,15 @@ export function useRoomKickButtonViewModel(props: RoomAdminToolsProps): RoomKick
                     ? _t("user_info|disinvite_button_space")
                     : _t("user_info|kick_button_space")
                 : member.membership === KnownMembership.Invite
-                  ? _t("user_info|disinvite_button_room")
-                  : _t("user_info|kick_button_room"),
+                    ? _t("user_info|disinvite_button_room")
+                    : _t("user_info|kick_button_room"),
             title:
                 member.membership === KnownMembership.Invite
                     ? _t("user_info|disinvite_button_room_name", { roomName: room.name })
                     : _t("user_info|kick_button_room_name", { roomName: room.name }),
             askReason: member.membership === KnownMembership.Join,
             danger: true,
+            className: "mx_UserInfoKickDialog",
         };
 
         let finished: Promise<[success?: boolean, reason?: string, rooms?: Room[]]>;
@@ -131,8 +132,8 @@ export function useRoomKickButtonViewModel(props: RoomAdminToolsProps): RoomKick
             ? _t("user_info|disinvite_button_space")
             : _t("user_info|kick_button_space")
         : member.membership === KnownMembership.Invite
-          ? _t("user_info|disinvite_button_room")
-          : _t("user_info|kick_button_room");
+            ? _t("user_info|disinvite_button_room")
+            : _t("user_info|kick_button_room");
 
     return {
         onKickClick,

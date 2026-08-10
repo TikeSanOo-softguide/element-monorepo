@@ -483,8 +483,8 @@ export class EmailIdentityAuthEntry extends React.Component<
                                             onTooltipOpenChange={
                                                 this.state.requested
                                                     ? (open) => {
-                                                          if (!open) this.setState({ requested: false });
-                                                      }
+                                                        if (!open) this.setState({ requested: false });
+                                                    }
                                                     : undefined
                                             }
                                             onClick={async (): Promise<void> => {
@@ -527,6 +527,7 @@ interface IMsisdnAuthEntryState {
 
 export class MsisdnAuthEntry extends React.Component<IMsisdnAuthEntryProps, IMsisdnAuthEntryState> {
     public static LOGIN_TYPE = AuthType.Msisdn;
+    private static isRequestPending = false;
 
     private submitUrl?: string;
     private sid?: string;
@@ -545,6 +546,11 @@ export class MsisdnAuthEntry extends React.Component<IMsisdnAuthEntryProps, IMsi
     public componentDidMount(): void {
         this.props.onPhaseChange(DEFAULT_PHASE);
 
+        if (MsisdnAuthEntry.isRequestPending) {
+            return;
+        }
+
+        MsisdnAuthEntry.isRequestPending = true;
         this.setState({ requestingToken: true });
         this.requestMsisdnToken()
             .catch((e) => {
@@ -552,6 +558,7 @@ export class MsisdnAuthEntry extends React.Component<IMsisdnAuthEntryProps, IMsi
             })
             .finally(() => {
                 this.setState({ requestingToken: false });
+                MsisdnAuthEntry.isRequestPending = false;
             });
     }
 

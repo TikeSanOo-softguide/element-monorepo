@@ -60,13 +60,14 @@ export const useBanButtonViewModel = (props: RoomAdminToolsProps): BanButtonStat
                     ? _t("user_info|unban_button_space")
                     : _t("user_info|ban_button_space")
                 : isBanned
-                  ? _t("user_info|unban_button_room")
-                  : _t("user_info|ban_button_room"),
+                    ? _t("user_info|unban_button_room")
+                    : _t("user_info|ban_button_room"),
             title: isBanned
                 ? _t("user_info|unban_room_confirm_title", { roomName: room.name })
                 : _t("user_info|ban_room_confirm_title", { roomName: room.name }),
             askReason: !isBanned,
             danger: !isBanned,
+            className: "mx_UserInfoBanDialog",
         };
 
         let finished: Promise<[success?: boolean, reason?: string, rooms?: Room[]]>;
@@ -79,29 +80,29 @@ export const useBanButtonViewModel = (props: RoomAdminToolsProps): BanButtonStat
                     space: room,
                     spaceChildFilter: isBanned
                         ? (child: Room) => {
-                              // Return true if the target member is banned and we have sufficient PL to unban
-                              const myMember = child.getMember(cli.credentials.userId || "");
-                              const theirMember = child.getMember(member.userId);
-                              return (
-                                  !!myMember &&
-                                  !!theirMember &&
-                                  theirMember.membership === KnownMembership.Ban &&
-                                  myMember.powerLevel > theirMember.powerLevel &&
-                                  child.currentState.hasSufficientPowerLevelFor("ban", myMember.powerLevel)
-                              );
-                          }
+                            // Return true if the target member is banned and we have sufficient PL to unban
+                            const myMember = child.getMember(cli.credentials.userId || "");
+                            const theirMember = child.getMember(member.userId);
+                            return (
+                                !!myMember &&
+                                !!theirMember &&
+                                theirMember.membership === KnownMembership.Ban &&
+                                myMember.powerLevel > theirMember.powerLevel &&
+                                child.currentState.hasSufficientPowerLevelFor("ban", myMember.powerLevel)
+                            );
+                        }
                         : (child: Room) => {
-                              // Return true if the target member isn't banned and we have sufficient PL to ban
-                              const myMember = child.getMember(cli.credentials.userId || "");
-                              const theirMember = child.getMember(member.userId);
-                              return (
-                                  !!myMember &&
-                                  !!theirMember &&
-                                  theirMember.membership !== KnownMembership.Ban &&
-                                  myMember.powerLevel > theirMember.powerLevel &&
-                                  child.currentState.hasSufficientPowerLevelFor("ban", myMember.powerLevel)
-                              );
-                          },
+                            // Return true if the target member isn't banned and we have sufficient PL to ban
+                            const myMember = child.getMember(cli.credentials.userId || "");
+                            const theirMember = child.getMember(member.userId);
+                            return (
+                                !!myMember &&
+                                !!theirMember &&
+                                theirMember.membership !== KnownMembership.Ban &&
+                                myMember.powerLevel > theirMember.powerLevel &&
+                                child.currentState.hasSufficientPowerLevelFor("ban", myMember.powerLevel)
+                            );
+                        },
                     allLabel: isBanned ? _t("user_info|unban_space_everything") : _t("user_info|ban_space_everything"),
                     specificLabel: isBanned ? _t("user_info|unban_space_specific") : _t("user_info|ban_space_specific"),
                     warningMessage: isBanned ? _t("user_info|unban_space_warning") : _t("user_info|kick_space_warning"),
