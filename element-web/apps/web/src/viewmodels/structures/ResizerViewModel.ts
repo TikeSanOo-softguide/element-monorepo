@@ -18,11 +18,10 @@ import { debounce } from "lodash";
 
 import SettingsStore from "../../settings/SettingsStore";
 import { SettingLevel } from "../../settings/SettingLevel";
-import { isMobileLayout } from "../../utils/device/isMobileLayout.ts";
 
 
 function getInitialState(): ResizerViewSnapshot {
-    if (!isMobileLayout() && SettingsStore.getValue("RoomList.isPanelCollapsed")) {
+    if (SettingsStore.getValue("RoomList.isPanelCollapsed")) {
         return {
             isCollapsed: true,
             initialSize: 0,

@@ -153,6 +153,8 @@ function PinMenu({ event, room, permalinkCreator, contentId }: PinMenuProps): JS
     const onViewInTimeline = useCallback(() => {
         PosthogTrackers.trackInteraction("PinnedMessageListViewTimeline");
 
+        dis.dispatch({ action: Action.CloseRightPanel })
+
         dis.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             event_id: event.getId(),

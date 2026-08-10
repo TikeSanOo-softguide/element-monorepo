@@ -11,6 +11,7 @@ import { KnownMembership } from "matrix-js-sdk/src/types";
 import { logger } from "matrix-js-sdk/src/logger";
 import React, { type JSX, useCallback, useContext, useRef, useState } from "react";
 import {
+    ChevronLeftIcon,
     GroupIcon,
     PlusIcon,
     RoomIcon,
@@ -77,6 +78,7 @@ import { type RoomPermalinkCreator } from "../../utils/permalinks/Permalinks";
 import SpacePillButton from "./SpacePillButton.tsx";
 import { useRoomName } from "../../hooks/useRoomName.ts";
 import MultiInviter from "../../utils/MultiInviter.ts";
+import { isMobileLayout } from "../../utils/device/isMobileLayout.ts";
 
 interface IProps {
     space: Room;
@@ -757,6 +759,12 @@ export default class SpaceRoomView extends React.PureComponent<IProps, IState> {
         }
     }
 
+    private onBackClick = (): void => {
+        defaultDispatcher.dispatch({
+            action: Action.RoomExited,
+        })
+    };
+
     public render(): React.ReactNode {
         const rightPanel =
             this.state.showRightPanel && this.state.phase === Phase.Landing ? (
@@ -769,6 +777,16 @@ export default class SpaceRoomView extends React.PureComponent<IProps, IState> {
 
         return (
             <main className="mx_SpaceRoomView">
+                {isMobileLayout() && <AccessibleButton
+                    onClick={this.onBackClick}
+                    className="mx_Dialog_backButton"
+                    title={_t("action|close")}
+                    aria-label={_t("space_landing_close_label")}
+                    placement="bottom"
+                >
+                    <ChevronLeftIcon />
+                </AccessibleButton>
+                }
                 <ErrorBoundary>
                     <MainSplit panel={rightPanel} analyticsRoomType="space">
                         {this.renderBody()}

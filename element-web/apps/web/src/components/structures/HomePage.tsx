@@ -8,7 +8,7 @@ Please see LICENSE files in the repository root for full details.
 
 import React, { type JSX } from "react";
 import { useContext, useState } from "react";
-import { ChatSolidIcon, ExploreIcon, GroupIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
+import { ChatSolidIcon, ChevronLeftIcon, ExploreIcon, GroupIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 import { AutoHideScrollbar } from "@element-hq/web-shared-components";
 
 import { getHomePageUrl } from "../../utils/pages";
@@ -25,6 +25,7 @@ import MatrixClientContext, { useMatrixClientContext } from "../../contexts/Matr
 import MiniAvatarUploader, { AVATAR_SIZE } from "../views/elements/MiniAvatarUploader";
 import PosthogTrackers from "../../PosthogTrackers";
 import EmbeddedPage from "./EmbeddedPage";
+import { isMobileLayout } from "../../utils/device/isMobileLayout";
 
 const onClickSendDm = (ev: ButtonEvent): void => {
     PosthogTrackers.trackInteraction("WebHomeCreateChatButton", ev);
@@ -112,9 +113,24 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
         );
     }
 
+    const onBackClick = (): void => {
+        dis.dispatch({
+            action: Action.RoomExited,
+        })
+    };
+
     return (
         <AutoHideScrollbar className="mx_AutoHideScrollbar mx_HomePage mx_HomePage_default" as="main">
             <div className="mx_HomePage_default_wrapper">
+                {isMobileLayout() && <AccessibleButton
+                    onClick={onBackClick}
+                    className="mx_Dialog_backButton"
+                    title={_t("action|close")}
+                    aria-label={_t("room_close_label")}
+                    placement="bottom"
+                >
+                    <ChevronLeftIcon />
+                </AccessibleButton>}
                 {introSection}
                 <div className="mx_HomePage_default_buttons">
                     <AccessibleButton onClick={onClickSendDm} className="mx_HomePage_button_sendDm">

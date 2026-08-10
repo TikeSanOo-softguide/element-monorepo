@@ -1,7 +1,7 @@
 {
     "default_server_config": {
         "m.homeserver": {
-            "base_url": "https://chat-admin-backend.burmalearn.site/",
+            "base_url": "http://localhost:8008",
             "server_name": "teak-chat.org"
         },
         "m.identity_server": {

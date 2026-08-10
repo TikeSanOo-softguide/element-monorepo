@@ -126,6 +126,7 @@ const NewRoomIntro: React.FC = () => {
                 {
                     action: "open_room_settings",
                     room_id: roomId,
+                    initial_tab_id: RoomSettingsTab.General,
                 },
                 true,
             );

@@ -34,6 +34,7 @@ export interface LeftResizablePanelViewActions {
 type Props = {
     vm: ViewModel<ResizerViewSnapshot, LeftResizablePanelViewActions>;
     className?: string;
+    collapsible?: boolean;
 } & Pick<PanelProps, "minSize" | "maxSize" | "defaultSize">;
 
 /**
@@ -48,6 +49,7 @@ export function LeftResizablePanelView({
 }: PropsWithChildren<Props>): React.ReactNode {
     const { initialSize, isCollapsed } = useViewModel(vm);
     const [panelRef, setPanelRef] = usePanelCallbackRef();
+    const collapsible = props.collapsible ?? true;
 
     useEffect(() => {
         if (panelRef) vm.setPanelHandle(panelRef);
@@ -60,7 +62,7 @@ export function LeftResizablePanelView({
             inert={isCollapsed}
             id={LEFT_PANEL_ID}
             className={className}
-            collapsible
+            collapsible={collapsible}
             minSize={props.minSize}
             maxSize={props.maxSize}
             defaultSize={defaultSize}

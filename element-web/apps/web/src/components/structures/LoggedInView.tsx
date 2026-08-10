@@ -105,6 +105,7 @@ interface IState {
     useCompactLayout: boolean;
     activeCalls: Array<MatrixCall>;
     backgroundImage?: string;
+    roomEntered: boolean;
 }
 
 /**
@@ -157,32 +158,30 @@ class LoggedInView extends React.Component<IProps, IState> {
     private onDispatch = (payload: any): void => {
         switch (payload.action) {
             case Action.RoomEntered: {
-                this.state.roomEntered = true;
+                this.setState({ roomEntered: true }, this.controlDisplay)
                 break;
             }
             case Action.RoomExited: {
-                this.state.roomEntered = false;
+                this.setState({ roomEntered: false }, this.controlDisplay)
                 break;
             }
         }
-        this.controlDisplay();
     };
 
     private controlDisplay = (): void => {
-        let spacePanel = document.querySelector('.mx_SpacePanel') as HTMLDivElement | null;
-        let roomListPanel = document.querySelector('.mx_RoomList_panel') as HTMLDivElement | null;
-        let messagePanel = document.querySelector('.mx_Message_panel') as HTMLDivElement | null;
-        let roomListPanelWrapper = roomListPanel?.parentElement
-        let messagePanelWrapper = messagePanel?.parentElement
+        const spacePanel = document.querySelector('.mx_SpacePanel') as HTMLDivElement | null;
+        const leftPanel = document.querySelector('#left-panel') as HTMLDivElement | null;
+        const rightPanel = document.querySelector('#right-panel') as HTMLDivElement | null;
+
         if (isMobileLayout()) {
             if (this.state.roomEntered) {
                 spacePanel?.classList.add('mx_hidden')
-                roomListPanelWrapper?.classList.add('mx_hidden')
-                messagePanelWrapper?.classList.remove('mx_hidden')
+                leftPanel?.classList.add('mx_hidden')
+                rightPanel?.classList.remove('mx_hidden')
             } else {
                 spacePanel?.classList.remove('mx_hidden')
-                roomListPanelWrapper?.classList.remove('mx_hidden')
-                messagePanelWrapper?.classList.add('mx_hidden')
+                leftPanel?.classList.remove('mx_hidden')
+                rightPanel?.classList.add('mx_hidden')
             }
         }
     }
@@ -742,14 +741,15 @@ class LoggedInView extends React.Component<IProps, IState> {
                     <LeftResizablePanelView
                         vm={resizerViewModel}
                         className="mx_LeftPanel_panel mx_RoomList_panel"
+                        collapsible={!isMobileLayout()}
                         minSize="200px"
                         maxSize="370px"
                         defaultSize="370px"
                     >
                         {leftPanel}
                     </LeftResizablePanelView>
-                    {!isMobileLayout() && <SeparatorView className="mx_Separator" vm={resizerViewModel} />}
-                    <Panel className="mx_LeftPanel_panel mx_Message_panel">{roomView}</Panel>
+                    <SeparatorView className={`mx_Separator ${isMobileLayout() ? 'mx_hidden' : ''}`} vm={resizerViewModel} />
+                    <Panel id="right-panel" className="mx_LeftPanel_panel mx_Message_panel">{roomView}</Panel>
                 </GroupView>
             );
         } else {

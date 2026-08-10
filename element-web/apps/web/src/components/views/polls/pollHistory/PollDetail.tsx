@@ -39,6 +39,7 @@ export const PollDetail: React.FC<Props> = ({ poll, permalinkCreator, requestMod
         }
         // otherwise handle navigation in the app
         e.preventDefault();
+        dispatcher.dispatch({ action: Action.CloseRightPanel })
         dispatcher.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             event_id: eventIdToLinkTo,

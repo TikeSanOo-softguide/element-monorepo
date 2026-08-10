@@ -38,6 +38,10 @@
     .mx_RoomSettingsDialog {
         width: 70vw;
 
+        .mx_Dialog_title {
+            padding-right: 0;
+        }
+
         .mx_TabbedView_tabsOnLeft {
             width: 85%;
 
@@ -69,6 +73,26 @@
             display: none;
         }
     }
+
+    .mx_ManageRestrictedJoinRuleDialog {
+        width: 65vw;
+
+        .mx_ManageRestrictedJoinRuleDialog_footer_buttons {
+            margin-left: 0;
+        }
+    }
+
+    .mx_ForwardDialog {
+        width: 70vw;
+    }
+
+    .mx_UnpinAllDialog {
+        max-width: 100%;
+    }
+
+    .mx_PollHistoryList_list {
+        width: 90%;
+    }
 }
 
 @media (max-width: 535px) {
@@ -81,12 +105,20 @@
             }
         }
     }
-}
+    
+    .mx_BulkRedactDialog, 
+    .mx_UserInfoKickDialog, 
+    .mx_UserInfoBanDialog, 
+    .mx_UserInfoDeactivateDialog {
+        width: 70vw;
 
-@media (max-width: 375px) {
-    .mx_RoomSettingsDialog {
-        .mx_Dialog_title {
-            padding-right: 70px;
+        .mx_Dialog_buttons {
+            .mx_Dialog_buttons_row {
+                button {
+                    min-width: 0;
+                    padding: 7px 10px;
+                }
+            }
         }
     }
 }

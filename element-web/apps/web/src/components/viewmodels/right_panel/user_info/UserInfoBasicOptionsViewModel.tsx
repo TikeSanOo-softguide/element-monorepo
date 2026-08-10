@@ -72,6 +72,7 @@ export const useUserInfoBasicOptionsViewModel = (room: Room, member: User | Room
         const room = member instanceof RoomMember ? cli.getRoom(member.roomId) : null;
         if (!room || readReceiptButtonDisabled) return;
 
+        dis.dispatch({ action: Action.CloseRightPanel })
         dis.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             highlighted: true,
@@ -83,6 +84,7 @@ export const useUserInfoBasicOptionsViewModel = (room: Room, member: User | Room
     };
 
     const onInsertPillButton = function (): void {
+        dis.dispatch({ action: Action.CloseRightPanel })
         dis.dispatch<ComposerInsertPayload>({
             action: Action.ComposerInsert,
             userId: member.userId,

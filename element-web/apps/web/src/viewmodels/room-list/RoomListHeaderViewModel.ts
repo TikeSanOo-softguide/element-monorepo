@@ -51,8 +51,7 @@ export interface Props {
  */
 export class RoomListHeaderViewModel
     extends BaseViewModel<RoomListHeaderViewSnapshot, Props>
-    implements RoomListHeaderViewModelInterface
-{
+    implements RoomListHeaderViewModelInterface {
     /**
      * Reference to the currently active space.
      * Used to manage event listeners.
@@ -159,6 +158,9 @@ export class RoomListHeaderViewModel
 
     public openSpaceHome = (): void => {
         if (!this.activeSpace) return;
+        defaultDispatcher.dispatch({
+            action: Action.RoomEntered,
+        });
         defaultDispatcher.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             room_id: this.activeSpace.roomId,

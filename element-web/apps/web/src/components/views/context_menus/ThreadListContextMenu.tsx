@@ -48,6 +48,7 @@ const ThreadListContextMenu: React.FC<ThreadListContextMenuProps> = ({
         (evt: ButtonEvent): void => {
             evt.preventDefault();
             evt.stopPropagation();
+            dis.dispatch({ action: Action.CloseRightPanel })
             dis.dispatch<ViewRoomPayload>({
                 action: Action.ViewRoom,
                 event_id: mxEvent.getId(),

@@ -100,6 +100,10 @@ export default class ForgotPassword extends React.Component<Props, State> {
         this.reset = new PasswordReset(this.props.serverConfig.hsUrl, this.props.serverConfig.isUrl);
     }
 
+    public componentDidMount(): void {
+        this.unmounted = false;
+    }
+
     public componentDidUpdate(prevProps: Readonly<Props>): void {
         if (
             prevProps.serverConfig.hsUrl !== this.props.serverConfig.hsUrl ||
@@ -167,8 +171,8 @@ export default class ForgotPassword extends React.Component<Props, State> {
             const errorText = isNaN(retryAfterMs)
                 ? _t("auth|reset_password|rate_limit_error")
                 : _t("auth|reset_password|rate_limit_error_with_time", {
-                      timeout: formatSeconds(retryAfterMs / 1000),
-                  });
+                    timeout: formatSeconds(retryAfterMs / 1000),
+                });
 
             this.setState({
                 errorText,

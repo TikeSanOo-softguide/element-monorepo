@@ -51,6 +51,7 @@ import {
     RoomStatusBarView,
     useCreateAutoDisposedViewModel,
 } from "@element-hq/web-shared-components";
+import { ChevronLeftIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import shouldHideEvent from "../../shouldHideEvent";
 import { _t } from "../../languageHandler";
@@ -144,10 +145,11 @@ import { EncryptionEventViewModel } from "../../viewmodels/room/timeline/event-t
 import { ModuleApi } from "../../modules/Api.ts";
 import { RoomUploadContextProvider } from "../../viewmodels/room/RoomUploadViewModel.tsx";
 import { EventPresentationContextProvider } from "../../utils/EventPresentationContextProvider";
+import { isMobileLayout } from "../../utils/device/isMobileLayout.ts";
 
 const DEBUG = false;
 const PREVENT_MULTIPLE_JITSI_WITHIN = 30_000;
-let debuglog = function (msg: string): void {};
+let debuglog = function (msg: string): void { };
 
 const BROWSER_SUPPORTS_SANDBOX = "sandbox" in document.createElement("iframe");
 
@@ -1739,6 +1741,12 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
         }
     };
 
+    private onBackClick = (): void => {
+        defaultDispatcher.dispatch({
+            action: Action.RoomExited,
+        })
+    };
+
     private onMessageListScroll = (): void => {
         if (this.messagePanel?.isAtEndOfLiveTimeline()) {
             this.setState({
@@ -2331,6 +2339,15 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
                 // We have a regular invite for this room.
                 return (
                     <div className="mx_RoomView">
+                        {isMobileLayout() && <AccessibleButton
+                            onClick={this.onBackClick}
+                            className="mx_Dialog_backButton"
+                            title={_t("action|close")}
+                            aria-label={_t("room_close_label")}
+                            placement="bottom"
+                        >
+                            <ChevronLeftIcon />
+                        </AccessibleButton>}
                         <ErrorBoundary>
                             <RoomPreviewBar
                                 onJoinClick={this.onJoinButtonClicked}
