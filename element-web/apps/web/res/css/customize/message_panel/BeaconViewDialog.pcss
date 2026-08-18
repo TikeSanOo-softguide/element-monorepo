@@ -1,0 +1,38 @@
+.mx_BeaconViewDialog:has(#mx_Map_mx_BeaconViewDialog) {
+    .maplibregl-ctrl-top-right {
+        top: 40px;
+        right: 5px;
+
+        .maplibregl-ctrl-attrib.maplibregl-compact {
+            display: none;
+        }
+    }
+
+    .mx_DialogSidebar {
+        z-index: 3;
+    }
+
+    .mx_BeaconViewDialog_viewListButton {
+        z-index: 3;
+        top: 15px;
+    }
+}
+
+@media (max-width: 535px) {
+    .mx_BeaconViewDialog:has(#mx_Map_mx_BeaconViewDialog) {
+        .mx_DialogOwnBeaconStatus {
+            width: 75%;
+            left: 3%;
+            margin-left: 0;
+            bottom: 36px;
+        }
+    }
+}
+
+@media (max-width: 430px) {
+    .mx_BeaconViewDialog:has(#mx_Map_mx_BeaconViewDialog) {
+        .mx_DialogSidebar {
+            width: 80%;
+        }
+    }
+}

@@ -77,6 +77,12 @@
     .mx_ManageRestrictedJoinRuleDialog {
         width: 65vw;
 
+        .mx_SearchBox {
+            input {
+                width: 100%;
+            }
+        }
+
         .mx_ManageRestrictedJoinRuleDialog_footer_buttons {
             margin-left: 0;
         }
@@ -88,10 +94,6 @@
 
     .mx_UnpinAllDialog {
         max-width: 100%;
-    }
-
-    .mx_PollHistoryList_list {
-        width: 90%;
     }
 }
 
@@ -105,18 +107,36 @@
             }
         }
     }
-    
-    .mx_BulkRedactDialog, 
-    .mx_UserInfoKickDialog, 
-    .mx_UserInfoBanDialog, 
-    .mx_UserInfoDeactivateDialog {
-        width: 70vw;
+}
 
-        .mx_Dialog_buttons {
-            .mx_Dialog_buttons_row {
-                button {
-                    min-width: 0;
-                    padding: 7px 10px;
+@media (max-width: 400px) {
+    .mx_ForwardDialog { 
+        .mx_SearchBox {
+            .mx_textinput_search {
+                width: 100%;
+            }
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .mx_RoomSettingsDialog,
+    .mx_ForwardDialog {
+        width: 65vw;
+    }
+}
+
+
+@media (max-height: 800px) {
+    .mx_ManageRestrictedJoinRuleDialog_wrapper  {
+        .mx_Dialog {
+            height: 85vh;
+
+            .mx_ManageRestrictedJoinRuleDialog {
+                height: 100%;
+
+                .mx_ManageRestrictedJoinRuleDialog_footer {
+                    margin-top: 0;
                 }
             }
         }

@@ -1,0 +1,52 @@
+@media (max-width: 767px) {
+    .mx_MessageComposer_wrapper {
+        .mx_UserIdentityWarning {
+            .mx_UserIdentityWarning_row {
+                display: grid;
+                grid-template-columns: 20% 1fr;
+
+                button {
+                    grid-column: 2;
+                    justify-self: end;
+                }
+            }
+        }
+    }
+
+    .mx_ThreadView {
+        .mx_MessageComposer_wrapper {
+            .mx_UserIdentityWarning {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+    }
+}
+
+@media (max-width: 580px) {
+    .mx_MessageComposer_wrapper:has(.mx_MessageComposer_actions .mx_MediaBody) {
+        padding-left: 20px;
+
+        .mx_BasicMessageComposer,
+        .mx_MessageComposer_e2eIconWrapper {
+            display: none;
+        }
+
+        .mx_MessageComposer_actions {
+            width: 100%;
+
+            .mx_MediaBody.mx_VoiceMessagePrimaryContainer {
+                max-width: none;
+                min-width: 0;
+                width: 100%;
+            }
+        }
+    }
+
+    .mx_MessageComposer_wrapper:not(has(.mx_MessageComposer_actions .mx_MediaBody)) {
+        .mx_BasicMessageComposer,
+        .mx_MessageComposer_e2eIconWrapper {
+            display: inline;
+        }
+    }
+}

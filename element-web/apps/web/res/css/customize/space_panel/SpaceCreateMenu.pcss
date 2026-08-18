@@ -1,7 +1,7 @@
 @media (max-width: 560px) {
     .mx_SpaceCreateMenu_wrapper {
-        left: 72px!important;
-        width: 79vw!important;
+        left: 72px !important;
+        width: 79vw !important;
 
         .mx_ContextualMenu {
             width: 100%;
@@ -10,5 +10,39 @@
                 width: 100%;
             }
         }
+    }
+}
+
+@media (max-width: 360px) {
+    .mx_SpaceCreateMenu_wrapper {
+        width: 75vw !important;
+
+        .mx_ContextualMenu {
+            .mx_SpaceBasicSettings {
+                .mx_Field {
+                    margin: 12px 0;
+                }
+            }
+
+            .mx_SpacePillButton {
+                padding: 10px 12px 10px 52px;
+
+                svg {
+                    left: 12px;
+                }
+            }
+        }
+    }
+}
+
+@media (max-height: 700px) {
+    .mx_SpaceCreateMenu_wrapper {
+        top: 50px !important;
+    }
+}
+
+@media (max-height: 600px) {
+    .mx_SpaceCreateMenu_wrapper {
+        top: 7px !important;
     }
 }

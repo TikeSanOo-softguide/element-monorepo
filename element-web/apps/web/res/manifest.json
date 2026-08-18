@@ -1,6 +1,6 @@
 {
-    "name": "Element",
-    "short_name": "Element",
+    "name": "Teak Chat",
+    "short_name": "Teak Chat",
     "display": "standalone",
     "theme_color": "#76CFA6",
     "start_url": "index.html",

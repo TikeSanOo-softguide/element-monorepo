@@ -93,7 +93,7 @@ export const RoomListPrimaryFilters = memo(function RoomListPrimaryFilters({
                 align="center"
                 gap="var(--cpd-space-2x)"
                 wrap="wrap"
-                className={styles.list}
+                className={`${styles.list} mx_RoomListPrimaryFilters`}
                 ref={ref}
             >
                 {visibleFilterIds.map((filterId, index) => (

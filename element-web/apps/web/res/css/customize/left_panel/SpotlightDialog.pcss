@@ -1,5 +1,36 @@
+.mx_SpotlightDialog {
+    .mx_SpotlightDialog_recentlyViewed {
+        > div {
+            overflow-x: auto;
+            scrollbar-color: transparent transparent;
+            touch-action: pan-x;
+        }
+        > div:hover {
+            scrollbar-color: #0003 transparent;
+        }
+    }
+}
+
 @media (max-width: 767px) {
     .mx_SpotlightDialog {
         width: 90vw;
+
+        .mx_SpotlightDialog_recentlyViewed {
+            > div {
+                scrollbar-width: none;
+            }
+
+            > div::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .mx_SpotlightDialog_wrapper {
+        .mx_Dialog {
+            min-height: 65% !important;
+        }
     }
 }

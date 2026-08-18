@@ -15,7 +15,7 @@ import {
     RoomViewLifecycle,
 } from "@matrix-org/react-sdk-module-api/lib/lifecycles/RoomViewLifecycle";
 import { Button } from "@vector-im/compound-web";
-import { AskToJoinIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
+import { AskToJoinIcon, ChevronLeftIcon } from "@vector-im/compound-design-tokens/assets/web/icons";
 
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher/dispatcher";
@@ -32,6 +32,8 @@ import { UIFeature } from "../../../settings/UIFeature";
 import { ModuleRunner } from "../../../modules/ModuleRunner";
 import Field from "../elements/Field";
 import { ModuleApi } from "../../../modules/Api.ts";
+import { isMobileLayout } from "../../../utils/device/isMobileLayout.ts";
+import { Action } from "../../../dispatcher/actions.ts";
 
 const MemberEventHtmlReasonField = "io.element.html_reason";
 
@@ -115,7 +117,7 @@ interface IState {
 
 class RoomPreviewBar extends React.Component<IProps, IState> {
     public static defaultProps = {
-        onJoinClick() {},
+        onJoinClick() { },
     };
 
     public constructor(props: IProps) {
@@ -719,8 +721,23 @@ class RoomPreviewBar extends React.Component<IProps, IState> {
             </>
         );
 
+        const onBackClick = (): void => {
+            dis.dispatch({
+                action: Action.RoomExited,
+            })
+        };
+
         return (
             <div role="complementary" className={classes}>
+                {isMobileLayout() && <AccessibleButton
+                    onClick={onBackClick}
+                    className="mx_Dialog_backButton"
+                    title={_t("action|close")}
+                    aria-label={_t("room_close_label")}
+                    placement="bottom"
+                >
+                    <ChevronLeftIcon />
+                </AccessibleButton>}
                 <div className="mx_RoomPreviewBar_message">
                     {titleElement}
                     {subTitleElements}

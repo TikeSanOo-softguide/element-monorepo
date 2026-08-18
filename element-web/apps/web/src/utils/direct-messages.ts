@@ -32,6 +32,8 @@ export async function startDmOnFirstMessage(client: MatrixClient, targets: Membe
 
     const existingRoom = findDMRoom(client, resolvedTargets);
 
+    dis.dispatch({ action: Action.CloseRightPanel })
+    dis.dispatch({ action: Action.RoomEntered })
     if (existingRoom) {
         dis.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,

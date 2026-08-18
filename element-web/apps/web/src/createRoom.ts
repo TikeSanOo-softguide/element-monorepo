@@ -399,6 +399,7 @@ export default async function createRoom(client: MatrixClient, opts: IOpts): Pro
                 // state over multiple syncs so we can't atomically know when we have the
                 // entire thing.
                 if (opts.andView) {
+                    dis.dispatch({ action: Action.RoomEntered })
                     dis.dispatch<ViewRoomPayload>({
                         action: Action.ViewRoom,
                         room_id: roomId,
