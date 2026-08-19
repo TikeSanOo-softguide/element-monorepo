@@ -188,7 +188,7 @@ function showStickersButton(props: IProps): ReactElement | null {
 
 function voiceRecordingButton(props: IProps, narrow: boolean): ReactElement | null {
     // XXX: recording UI does not work well in narrow mode, so hide for now
-    return narrow ? null : (
+    return (
         <CollapsibleButton
             key="voice_message_send"
             className="mx_MessageComposer_button"
@@ -234,7 +234,7 @@ class PollButton extends React.PureComponent<IPollButtonProps> {
                     room: this.props.room,
                     threadId,
                 },
-                "mx_CompoundDialog",
+                "mx_CompoundDialog mx_PollCreateDialog_wrapper",
                 false, // isPriorityModal
                 true, // isStaticModal
             );

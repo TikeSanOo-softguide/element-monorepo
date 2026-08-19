@@ -1,7 +1,86 @@
+.mx_InviteDialog_other {
+    .mx_InviteDialog_content {
+        .mx_InviteDialog_addressBar {
+            .mx_InviteDialog_editor {
+                max-height: 140px;
+                overflow: scroll;
+            }
+        }
+    }
+}
+
+@media (max-width: 1920px) {
+    .mx_SpaceSetupInitialRooms,
+    .mx_SpaceRoomView_publicShare,
+    .mx_SpaceRoomView_privateScope,
+    .mx_SpaceRoomView_onlyMe,
+    .mx_SpaceRoomView_inviteTeammates {
+        h1, .mx_SpaceRoomView_buttons, .mx_SpacePillButton {
+            max-width: 100%
+        }
+    }
+}
+
 @media (max-width: 767px) {
     .mx_SpaceRoomView_landing {
         &:has(~ .mx_RightPanel_ResizeWrapper) {
             padding: 0;
+        }
+
+        .mx_SearchBox {
+            .mx_SpaceHierarchy_search {
+                width: 100%;
+            }
+        }
+    }
+}
+
+@media (max-width: 535px) {
+    .mx_RoomPreviewCard {
+        margin: auto 20px;
+    }
+}
+
+@media (max-width: 400px) {
+    .mx_SpaceRoomView_onlyMe {
+        .mx_AddExistingToSpace {
+            .mx_SearchBox {
+                .mx_textinput_search {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .mx_SpaceRoomView_publicShare, .mx_SpaceRoomView_privateScope {
+        .mx_SpacePillButton {
+            padding: 10px 12px 10px 52px;
+
+            svg {
+                left: 12px;
+            }
+        }
+    }
+
+    .mx_UnknownIdentityUsersWarningDialog {
+        .mx_UnknownIdentityUsersWarningDialog_buttons {
+            button {
+                padding: 7px 10px;
+            }
+        }
+    }
+}
+
+@media (max-height: 700px) {
+    .mx_InviteDialog_other {
+        .mx_InviteDialog_content {
+            .mx_InviteDialog_addressBar {
+                .mx_InviteDialog_editor {
+                    max-height: 56px;
+                }
+            }
         }
     }
 }

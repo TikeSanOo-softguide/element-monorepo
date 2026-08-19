@@ -131,6 +131,7 @@ function ThreadsActivityCentreRow({ room, onClick, notificationLevel }: ThreadsA
                 PosthogTrackers.trackInteraction("WebThreadsActivityCentreRoomItem", event);
 
                 // Display the selected room in the timeline
+                defaultDispatcher.dispatch({ action: Action.RoomEntered })
                 defaultDispatcher.dispatch<ViewRoomPayload>({
                     action: Action.ViewRoom,
                     show_room_tile: true, // make sure the room is visible in the list

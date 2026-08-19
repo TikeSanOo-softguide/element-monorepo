@@ -63,7 +63,7 @@ export class ReleaseAnnouncementStore extends TypedEventEmitter<ReleaseAnnouncem
      * Whether the release announcement is enabled. Useful to disable it in e2e tests.
      * @private
      */
-    private enabled = true;
+    private enabled = false;
 
     /**
      * The singleton instance of the ReleaseAnnouncementStore.

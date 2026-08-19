@@ -66,7 +66,7 @@ export function findTopAnswer(pollEvent: MatrixEvent, voteRelations: Relations):
     if (!pollEventId) {
         logger.warn(
             "findTopAnswer: Poll event needs an event ID to fetch relations in order to determine " +
-                "the top answer - assuming no best answer",
+            "the top answer - assuming no best answer",
         );
         return "";
     }
@@ -132,7 +132,7 @@ export function launchPollEditor(mxEvent: MatrixEvent, getRelationsForEvent?: Ge
                 threadId: mxEvent.getThread()?.id,
                 editingMxEvent: mxEvent,
             },
-            "mx_CompoundDialog",
+            "mx_CompoundDialog mx_PollCreateDialog_wrapper",
             false, // isPriorityModal
             true, // isStaticModal
         );
@@ -376,7 +376,7 @@ export class UserVote {
         public readonly ts: number,
         public readonly sender: string,
         public readonly answers: string[],
-    ) {}
+    ) { }
 }
 
 function userResponseFromPollResponseEvent(event: MatrixEvent): UserVote {

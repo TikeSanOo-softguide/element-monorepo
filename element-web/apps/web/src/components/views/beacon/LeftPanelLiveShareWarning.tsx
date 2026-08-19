@@ -114,15 +114,16 @@ const LeftPanelLiveShareWarning: React.FC<Props> = ({ isMinimized }) => {
 
     const onWarningClick = relevantBeacon
         ? (_e: ButtonEvent) => {
-              dispatcher.dispatch<ViewRoomPayload>({
-                  action: Action.ViewRoom,
-                  room_id: relevantBeacon.roomId,
-                  metricsTrigger: undefined,
-                  event_id: relevantBeacon.beaconInfoId,
-                  scroll_into_view: true,
-                  highlighted: true,
-              });
-          }
+            dispatcher.dispatch({ action: Action.RoomEntered })
+            dispatcher.dispatch<ViewRoomPayload>({
+                action: Action.ViewRoom,
+                room_id: relevantBeacon.roomId,
+                metricsTrigger: undefined,
+                event_id: relevantBeacon.beaconInfoId,
+                scroll_into_view: true,
+                highlighted: true,
+            });
+        }
         : null;
 
     const label = getLabel(hasStoppingErrors, hasLocationPublishErrors);

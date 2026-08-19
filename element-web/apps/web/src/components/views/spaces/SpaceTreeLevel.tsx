@@ -99,9 +99,10 @@ export const SpaceButton = <T extends keyof HTMLElementTagNameMap>({
     }
 
     let notifBadge;
+    const isInvite = space?.getMyMembership() === KnownMembership.Invite;
     if (spaceKey && notificationState) {
         let ariaLabel = _t("a11y_jump_first_unread_room");
-        if (space?.getMyMembership() === KnownMembership.Invite) {
+        if (isInvite) {
             ariaLabel = _t("a11y|jump_first_invite");
         }
 
@@ -109,6 +110,7 @@ export const SpaceButton = <T extends keyof HTMLElementTagNameMap>({
             ev.stopPropagation();
             ev.preventDefault();
             SpaceStore.instance.setActiveRoomInSpace(spaceKey);
+            if (isInvite) viewSpaceHome();
         };
 
         notifBadge = (
@@ -135,10 +137,13 @@ export const SpaceButton = <T extends keyof HTMLElementTagNameMap>({
         );
     }
 
-    const viewSpaceHome = (): void =>
+    const viewSpaceHome = (): void => {
+        if (isInvite) defaultDispatcher.dispatch({ action: Action.RoomEntered });
         // space is set here because of the assignment condition of onClick
         defaultDispatcher.dispatch({ action: Action.ViewRoom, room_id: space!.roomId });
+    }
     const activateSpace = (): void => {
+        if (isInvite) defaultDispatcher.dispatch({ action: Action.RoomEntered });
         if (spaceKey) SpaceStore.instance.setActiveSpace(spaceKey);
     };
     const onClick = props.onClick ?? (selected && space ? viewSpaceHome : activateSpace);

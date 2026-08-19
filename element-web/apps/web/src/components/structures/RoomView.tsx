@@ -1741,12 +1741,6 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
         }
     };
 
-    private onBackClick = (): void => {
-        defaultDispatcher.dispatch({
-            action: Action.RoomExited,
-        })
-    };
-
     private onMessageListScroll = (): void => {
         if (this.messagePanel?.isAtEndOfLiveTimeline()) {
             this.setState({
@@ -2339,15 +2333,6 @@ export class RoomView extends React.Component<IRoomProps, IRoomState> {
                 // We have a regular invite for this room.
                 return (
                     <div className="mx_RoomView">
-                        {isMobileLayout() && <AccessibleButton
-                            onClick={this.onBackClick}
-                            className="mx_Dialog_backButton"
-                            title={_t("action|close")}
-                            aria-label={_t("room_close_label")}
-                            placement="bottom"
-                        >
-                            <ChevronLeftIcon />
-                        </AccessibleButton>}
                         <ErrorBoundary>
                             <RoomPreviewBar
                                 onJoinClick={this.onJoinButtonClicked}

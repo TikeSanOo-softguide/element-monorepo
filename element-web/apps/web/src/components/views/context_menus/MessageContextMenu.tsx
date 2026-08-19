@@ -395,6 +395,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
     }
 
     private viewInRoom = (): void => {
+        dis.dispatch({ action: Action.CloseRightPanel });
         dis.dispatch<ViewRoomPayload>({
             action: Action.ViewRoom,
             event_id: this.props.mxEvent.getId(),
@@ -506,12 +507,12 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                     label={_t("action|share")}
                     element="a"
                     {
-                        // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
-                        ...{
-                            href: permalink,
-                            target: "_blank",
-                            rel: "noreferrer noopener",
-                        }
+                    // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
+                    ...{
+                        href: permalink,
+                        target: "_blank",
+                        rel: "noreferrer noopener",
+                    }
                     }
                 />
             );
@@ -541,12 +542,12 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                     label={_t("timeline|context_menu|external_url")}
                     element="a"
                     {
-                        // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
-                        ...{
-                            target: "_blank",
-                            rel: "noreferrer noopener",
-                            href: mxEvent.getContent().external_url,
-                        }
+                    // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
+                    ...{
+                        target: "_blank",
+                        rel: "noreferrer noopener",
+                        href: mxEvent.getContent().external_url,
+                    }
                     }
                 />
             );
@@ -595,12 +596,12 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                     label={_t("action|copy_link")}
                     element="a"
                     {
-                        // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
-                        ...{
-                            href: link,
-                            target: "_blank",
-                            rel: "noreferrer noopener",
-                        }
+                    // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
+                    ...{
+                        href: link,
+                        target: "_blank",
+                        rel: "noreferrer noopener",
+                    }
                     }
                 />
             );

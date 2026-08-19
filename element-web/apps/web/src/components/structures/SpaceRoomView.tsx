@@ -372,7 +372,7 @@ const SpaceSetupFirstRooms: React.FC<{
     }
 
     return (
-        <div>
+        <div className="mx_SpaceSetupInitialRooms">
             <h1>{title}</h1>
             <div className="mx_SpaceRoomView_description">{description}</div>
 
@@ -401,7 +401,7 @@ const SpaceAddExistingRooms: React.FC<{
     onFinished(this: void): void;
 }> = ({ space, onFinished }) => {
     return (
-        <div>
+        <div className="mx_SpaceRoomView_onlyMe">
             <h1>{_t("create_space|add_existing_rooms_heading")}</h1>
             <div className="mx_SpaceRoomView_description">{_t("create_space|add_existing_rooms_description")}</div>
 
