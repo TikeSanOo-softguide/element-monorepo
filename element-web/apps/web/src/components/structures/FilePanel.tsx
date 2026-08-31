@@ -127,10 +127,10 @@ class FilePanel extends React.Component<IProps, IState> {
         // We do this only for encrypted rooms and if an event index exists,
         // this could be made more general in the future or the filter logic
         // could be fixed.
-        if (EventIndexPeg.get() !== null) {
-            client.on(RoomEvent.Timeline, this.onRoomTimeline);
-            client.on(MatrixEventEvent.Decrypted, this.onEventDecrypted);
-        }
+        // if (EventIndexPeg.get() !== null) { // Comment Out TTA
+        client.on(RoomEvent.Timeline, this.onRoomTimeline);
+        client.on(MatrixEventEvent.Decrypted, this.onEventDecrypted);
+        // } // Comment Out TTA
     }
 
     public componentWillUnmount(): void {
@@ -139,10 +139,10 @@ class FilePanel extends React.Component<IProps, IState> {
 
         if (!client.isRoomEncrypted(this.props.roomId)) return;
 
-        if (EventIndexPeg.get() !== null) {
-            client.removeListener(RoomEvent.Timeline, this.onRoomTimeline);
-            client.removeListener(MatrixEventEvent.Decrypted, this.onEventDecrypted);
-        }
+        // if (EventIndexPeg.get() !== null) { // Comment Out TTA
+        client.removeListener(RoomEvent.Timeline, this.onRoomTimeline);
+        client.removeListener(MatrixEventEvent.Decrypted, this.onEventDecrypted);
+        // } // Comment Out TTA
     }
 
     public async fetchFileEventsServer(room: Room): Promise<EventTimelineSet> {
@@ -162,7 +162,7 @@ class FilePanel extends React.Component<IProps, IState> {
         return room.getOrCreateFilteredTimelineSet(filter);
     }
 
-    private onPaginationRequest = (
+    private onPaginationRequest = async ( // Add TTA(async)
         timelineWindow: TimelineWindow,
         direction: Direction,
         limit: number,
@@ -188,41 +188,116 @@ class FilePanel extends React.Component<IProps, IState> {
         this.setState({ narrow });
     };
 
+    // Comment Out TTA
+    // public async updateTimelineSet(roomId: string): Promise<void> {
+    //     const client = MatrixClientPeg.safeGet();
+    //     const room = client.getRoom(roomId);
+    //     const eventIndex = EventIndexPeg.get();
+
+    //     this.noRoom = !room;
+
+    //     if (room) {
+    //         let timelineSet;
+
+    //         try {
+    //             timelineSet = await this.fetchFileEventsServer(room);
+
+    //             // If this room is encrypted the file panel won't be populated
+    //             // correctly since the defined filter doesn't support encrypted
+    //             // events and the server can't check if encrypted events contain
+    //             // URLs.
+    //             //
+    //             // This is where our event index comes into place, we ask the
+    //             // event index to populate the timelineSet for us. This call
+    //             // will add 10 events to the live timeline of the set. More can
+    //             // be requested using pagination.
+    //             if (client.isRoomEncrypted(roomId) && eventIndex !== null) {
+    //                 const timeline = timelineSet.getLiveTimeline();
+    //                 await eventIndex.populateFileTimeline(timelineSet, timeline, room, 10);
+    //             }
+
+    //             this.setState({ timelineSet: timelineSet });
+    //         } catch (error) {
+    //             logger.error("Failed to get or create file panel filter", error);
+    //         }
+    //     } else {
+    //         logger.error("Failed to add filtered timelineSet for FilePanel as no room!");
+    //     }
+    // }
+    // Comment Out TTA
+
+    // Add TTA
     public async updateTimelineSet(roomId: string): Promise<void> {
         const client = MatrixClientPeg.safeGet();
         const room = client.getRoom(roomId);
-        const eventIndex = EventIndexPeg.get();
 
         this.noRoom = !room;
 
-        if (room) {
-            let timelineSet;
+        if (!room) {
+            logger.error("Failed to add timelineSet for FilePanel as no room!");
+            return;
+        }
 
-            try {
-                timelineSet = await this.fetchFileEventsServer(room);
+        try {
+            const timelineSet = await this.fetchFileEventsServer(room);
 
-                // If this room is encrypted the file panel won't be populated
-                // correctly since the defined filter doesn't support encrypted
-                // events and the server can't check if encrypted events contain
-                // URLs.
-                //
-                // This is where our event index comes into place, we ask the
-                // event index to populate the timelineSet for us. This call
-                // will add 10 events to the live timeline of the set. More can
-                // be requested using pagination.
-                if (client.isRoomEncrypted(roomId) && eventIndex !== null) {
-                    const timeline = timelineSet.getLiveTimeline();
-                    await eventIndex.populateFileTimeline(timelineSet, timeline, room, 10);
+            // Non-E2EE rooms
+            if (!client.isRoomEncrypted(roomId)) {
+                this.setState({ timelineSet });
+                return;
+            }
+
+            const liveTimeline = room.getLiveTimeline();
+
+            // Load older room history
+            for (let i = 0; i < 5; i++) {
+                const success = await client.paginateEventTimeline(liveTimeline, {
+                    backwards: true,
+                    limit: 100,
+                });
+
+                if (!success) break;
+            }
+
+            // Copy events and sort newest -> oldest
+            const liveEvents = [...liveTimeline.getEvents()].sort(
+                (a, b) => a.getTs() - b.getTs(),
+            );
+
+            const targetTimeline = timelineSet.getLiveTimeline();
+
+            for (const ev of liveEvents) {
+                // Wait for E2EE decryption
+                await client.decryptEventIfNeeded(ev);
+
+                if (ev.getType() !== "m.room.message") continue;
+
+                const msgtype = ev.getContent()?.msgtype;
+
+                if (!["m.file", "m.image", "m.video", "m.audio"].includes(msgtype)) {
+                    continue;
                 }
 
-                this.setState({ timelineSet: timelineSet });
-            } catch (error) {
-                logger.error("Failed to get or create file panel filter", error);
+                const eventId = ev.getId();
+
+                if (
+                    eventId &&
+                    !timelineSet.eventIdToTimeline(eventId)
+                ) {
+                    timelineSet.addEventToTimeline(ev, targetTimeline, {
+                        fromCache: false,
+                        addToState: false,
+                        toStartOfTimeline: false,
+                    });
+                }
             }
-        } else {
-            logger.error("Failed to add filtered timelineSet for FilePanel as no room!");
+
+            this.setState({ timelineSet });
+        } catch (error) {
+            logger.error("Failed to set timelineSet for FilePanel", error);
         }
     }
+    // Add TTA
 
     public render(): React.ReactNode {
         if (MatrixClientPeg.safeGet().isGuest()) {
@@ -269,7 +344,7 @@ class FilePanel extends React.Component<IProps, IState> {
             />
         );
 
-        const isRoomEncrypted = this.noRoom ? false : MatrixClientPeg.safeGet().isRoomEncrypted(this.props.roomId);
+        // const isRoomEncrypted = this.noRoom ? false : MatrixClientPeg.safeGet().isRoomEncrypted(this.props.roomId); // Comment Out TTA
 
         if (this.state.timelineSet) {
             return (
@@ -286,7 +361,7 @@ class FilePanel extends React.Component<IProps, IState> {
                         header={_t("right_panel|files_button")}
                     >
                         <Measured sensor={this.card} onMeasurement={this.onMeasurement} />
-                        <SearchWarning isRoomEncrypted={isRoomEncrypted} kind={WarningKind.Files} />
+                        {/* <SearchWarning isRoomEncrypted={isRoomEncrypted} kind={WarningKind.Files} /> */}
                         <EventPresentationContextProvider layout={Layout.Group}>
                             <TimelinePanel
                                 manageReadReceipts={false}
