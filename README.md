@@ -97,20 +97,12 @@ docker compose down -v
 - **Need a clean install** — `docker compose down -v`, then `docker compose up --build`.
 - **Added a dependency but setup was skipped** — set `FORCE_SETUP=1` as above, or wipe volumes.
 - **`COMPOSE_BAKE` errors** — omit it and use `docker compose up --build`.
-- **Image build fails at `apt-get update` / `Dockerfile:3`** — Docker cannot reach Debian mirrors. On the Linux server, rebuild on the host network:
+- **Image build used to fail at `apt-get`** — this Dockerfile no longer calls apt. It uses the full `node:22` image (same idea as Chat-App-Admin-UI's `node:lts`), which already has git/python/make/g++. Pull the latest branch and rebuild:
 
   ```bash
-  docker build --network=host -t element-monorepo-element-web .
-  docker compose up
+  git pull origin feature/local-server
+  docker compose up --build
   ```
-
-  Or, after pulling this branch:
-
-  ```bash
-  DOCKER_BUILD_NETWORK=host docker compose up --build
-  ```
-
-  If that still fails, point the Docker daemon at public DNS (`/etc/docker/daemon.json` → `"dns": ["8.8.8.8", "1.1.1.1"]`) and `sudo systemctl restart docker`.
 
 ## Optional: Make (Unix only)
 
