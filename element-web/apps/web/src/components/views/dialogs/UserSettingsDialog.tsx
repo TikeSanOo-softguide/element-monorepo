@@ -49,6 +49,7 @@ import { type SDKContextClass } from "../../../contexts/SDKContextClass";
 import { useSettingValue } from "../../../hooks/useSettings";
 import { NoChange, useEventEmitterAsyncState, type AsyncStateCallbackResult } from "../../../hooks/useEventEmitter";
 import { EncryptionUserSettingsTab, type State } from "../settings/tabs/user/EncryptionUserSettingsTab";
+import { isMobileLayout } from "../../../utils/device/isMobileLayout.ts";
 
 interface IProps {
     initialTabId?: UserTab;
@@ -253,14 +254,21 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
     };
 
     const [activeTabId, _setActiveTabId] = useActiveTabWithDefault(getTabs(), UserTab.Account, props.initialTabId);
+    const [activeTabShown, setActiveTabShown] = React.useState(false);
+
     const setActiveTabId = (tabId: UserTab): void => {
         _setActiveTabId(tabId);
+        setActiveTabShown(true);
         // Clear these so switching away from the tab and back to it will not show the QR code again
         setShowMsc4108QrCode(false);
         setInitialEncryptionState(undefined);
     };
 
     const [activeToast, toastRack] = useActiveToast();
+
+    const backToTabLabels = (): void => {
+        setActiveTabShown(false);
+    };
 
     return (
         // XXX: SDKContext is provided within the LoggedInView subtree.
@@ -271,6 +279,8 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                 <BaseDialog
                     className="mx_UserSettingsDialog"
                     hasCancel={true}
+                    hasBack={isMobileLayout() && activeTabShown}
+                    onReturned={backToTabLabels}
                     onFinished={props.onFinished}
                     title={titleForTabID(activeTabId)}
                     titleClass="mx_UserSettingsDialog_title"
@@ -282,6 +292,7 @@ export default function UserSettingsDialog(props: IProps): JSX.Element {
                             screenName="UserSettings"
                             onChange={setActiveTabId}
                             responsive={true}
+                            activeTabShown={activeTabShown}
                         />
                     </div>
                     <div className="mx_SettingsDialog_toastContainer">
