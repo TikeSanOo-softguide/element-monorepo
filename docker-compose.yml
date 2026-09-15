@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # On Linux servers, set DOCKER_BUILD_NETWORK=host if apt-get cannot
+      # reach Debian mirrors through Docker's default bridge DNS.
+      network: ${DOCKER_BUILD_NETWORK:-default}
     ports:
       - "8080:8080"
     volumes:

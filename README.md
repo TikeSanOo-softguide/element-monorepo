@@ -15,11 +15,19 @@ docker compose version
 
 ## Setup process
 
-1. **Clone**
+1. **Clone** the Docker setup branch (`docker-compose.yml` is not on `main`)
 
    ```bash
-   git clone https://github.com/TikeSanOo-softguide/element-monorepo.git
+   git clone -b feature/local-server https://github.com/TikeSanOo-softguide/element-monorepo.git
    cd element-monorepo
+   ls docker-compose.yml Dockerfile entrypoint.sh
+   ```
+
+   If the repo is already cloned on `main`, switch branch instead:
+
+   ```bash
+   git fetch origin
+   git checkout feature/local-server
    ```
 
 2. **Start Docker Desktop** so the daemon is running.
@@ -89,6 +97,20 @@ docker compose down -v
 - **Need a clean install** — `docker compose down -v`, then `docker compose up --build`.
 - **Added a dependency but setup was skipped** — set `FORCE_SETUP=1` as above, or wipe volumes.
 - **`COMPOSE_BAKE` errors** — omit it and use `docker compose up --build`.
+- **Image build fails at `apt-get update` / `Dockerfile:3`** — Docker cannot reach Debian mirrors. On the Linux server, rebuild on the host network:
+
+  ```bash
+  docker build --network=host -t element-monorepo-element-web .
+  docker compose up
+  ```
+
+  Or, after pulling this branch:
+
+  ```bash
+  DOCKER_BUILD_NETWORK=host docker compose up --build
+  ```
+
+  If that still fails, point the Docker daemon at public DNS (`/etc/docker/daemon.json` → `"dns": ["8.8.8.8", "1.1.1.1"]`) and `sudo systemctl restart docker`.
 
 ## Optional: Make (Unix only)
 
