@@ -114,13 +114,26 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
     };
 
     private renderDeviceOptions(devices: Array<MediaDeviceInfo>, category: MediaDeviceKindEnum): Array<JSX.Element> {
-        return devices.map((d) => {
-            return (
-                <option key={`${category}-${d.deviceId}`} value={d.deviceId}>
-                    {d.label}
-                </option>
-            );
-        });
+        const screenWidth = window.innerWidth;
+        let maxLen = 45;
+
+        if (screenWidth < 480) {
+            maxLen = 10;  // Small Mobile
+        } else if (screenWidth < 768) {
+            maxLen = 20;  // Tablet / Large Mobile
+        } else if (screenWidth <= 1024) {
+            maxLen = 26;  // Laptop
+        }
+
+        const truncate = (str: string, len: number): string =>
+            str.length > len ? `${str.slice(0, len)}...` : str;
+
+
+        return devices.map((d) => (
+            <option key={`${category}-${d.deviceId}`} value={d.deviceId} title={d.label}>
+                {truncate(d.label, maxLen)}
+            </option>
+        ));
     }
 
     private renderDropdown(kind: MediaDeviceKindEnum, label: string): ReactNode {
@@ -128,15 +141,18 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
         if (!devices?.length) return null;
 
         const defaultDevice = MediaDeviceHandler.getDefaultDevice(devices);
+
         return (
-            <Field
-                element="select"
-                label={label}
-                value={this.state[kind] || defaultDevice}
-                onChange={(e) => this.setDevice(e.target.value, kind)}
-            >
-                {this.renderDeviceOptions(devices, kind)}
-            </Field>
+            <div className="mx_VoiceSettings_DeviceDropdown">
+                <Field
+                    element="select"
+                    label={label}
+                    value={this.state[kind] || defaultDevice}
+                    onChange={(e) => this.setDevice(e.target.value, kind)}
+                >
+                    {this.renderDeviceOptions(devices, kind)}
+                </Field>
+            </div>
         );
     }
 
@@ -195,7 +211,7 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
                 >
                     <SettingsSection>
                         {requestButton}
-                        <SettingsSubsection heading={_t("settings|voip|voice_section")} stretchContent>
+                        <SettingsSubsection heading={_t("settings|voip|voice_section")}>
                             {speakerDropdown}
                             {microphoneDropdown}
                             <SettingsToggleInput
@@ -205,7 +221,7 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
                                 onChange={this.onAutoGainChanged}
                             />
                         </SettingsSubsection>
-                        <SettingsSubsection heading={_t("settings|voip|video_section")} stretchContent>
+                        <SettingsSubsection heading={_t("settings|voip|video_section")}>
                             {webcamDropdown}
                             <SettingsFlag name="VideoView.flipVideoHorizontally" level={SettingLevel.ACCOUNT} />
                         </SettingsSubsection>

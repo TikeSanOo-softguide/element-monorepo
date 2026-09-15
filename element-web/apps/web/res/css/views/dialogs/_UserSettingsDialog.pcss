@@ -1,23 +1,171 @@
-/*
-Copyright 2019-2024 New Vector Ltd.
+/* =========================================================
+   NORMAL MOBILE (376px - 599px)
+   Targeting:
+   - 414px × 896px Portrait
+   ========================================================= */
+@media (max-width: 767px) {
+    .mx_UserSettingsDialog {
+        width: 70vw;
 
-SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only OR LicenseRef-Element-Commercial
-Please see LICENSE files in the repository root for full details.
-*/
+        .mx_TabbedView_tabsOnLeft {
+            width: 85%;
 
-.mx_SettingsDialog_toastContainer {
-    position: absolute;
-    bottom: var(--cpd-space-10x);
-    width: 100%;
-    display: flex;
-    justify-content: center;
+            .mx_TabbedView_tabLabels {
+                width: 85%;
+                max-width: none;
+            }
+
+            .mx_TabbedView_tabPanel {
+                margin-left: 7px;
+
+                .mx_SettingsTab {
+                    min-width: 0;
+                    margin-left: 0;
+                    padding-right: 0;
+                    box-sizing: border-box;
+
+                    /* Fix input overflow & right border clipping */
+                    input[type="text"],
+                    input[type="password"],
+                    .mx_Field,
+                    .mx_Field_input {
+                        width: 100% !important;
+                        max-width: calc(100% - 4px) !important;
+                        box-sizing: border-box !important;
+                    }
+                }
+            }
+        }
+
+        /* Filtered Device List Header */
+        .mx_FilteredDeviceListHeader {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            padding: 0 16px;
+            box-sizing: border-box;
+
+            /* Label text */
+            .mx_FilteredDeviceListHeader_label {
+                flex: 1;
+                white-space: nowrap;
+            }
+
+            /* Action dropdown */
+            .mx_FilteredDeviceListHeader_actions,
+            .mx_Dropdown {
+                margin-left: auto;
+                flex-shrink: 0;
+            }
+        }
+    }
 }
 
-.mx_UserSettingsDialog_title {
-    /* Override default dialog font style */
-    font: var(--cpd-font-heading-md-regular) !important;
+/* =========================================================
+   SMALL PHONE (320px - 375px)
+   Targeting:
+   - 320px × 568px Portrait
 
-    .mx_UserSettingsDialog_title_strong {
-        font: var(--cpd-font-heading-md-semibold);
+   iPHONE SE (375px - 389px)
+   Targeting:
+   - 375px × 667px Portrait
+
+   IN-BETWEEN MOBILE (350px - 389px)
+   Targeting:
+   - 350px × 667px Portrait
+   ========================================================= */
+
+@media (max-width: 535px) {
+    .mx_UserSettingsDialog {
+        .mx_TabbedView_tabsOnLeft {
+            width: 80%;
+
+            .mx_TabbedView_tabLabels {
+                width: 80%;
+            }
+        }
+    }
+        /* Filtered Device List Header */
+        .mx_FilteredDeviceListHeader {
+            position: relative;
+        }
+
+        /* For the device list filter dropdown menu */
+        .mx_Dropdown_menu#device-list-filter_listbox,
+        .mx_Dropdown_menu {
+            position: absolute !important;
+            left: 0 !important;
+            right: auto !important;
+            width: max-content !important;
+            max-width: calc(100vw - 40px) !important;
+            box-sizing: border-box !important;
+            z-index: 1000 !important;
+
+            /* Ensure option items stay readable and contained */
+            .mx_Dropdown_option,
+            .mx_FilterDropdown_option {
+                white-space: normal !important;
+                word-break: break-word !important;
+                box-sizing: border-box !important;
+            }
+        }
+    
+}
+
+
+/* For device list filter dropdown positioning across all screen sizes */
+.mx_UserSettingsDialog {
+    .mx_FilteredDeviceListHeader {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 12px; /* Spacing between checkbox, label, and dropdown */
+        height: auto;
+        min-height: 48px;
+
+        /* Checkbox alignment */
+        input[type="checkbox"],
+        .mx_Checkbox {
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        /* Label ("Sessions") */
+        .mx_FilteredDeviceListHeader_label {
+            flex: 0 1 auto !important; /* Prevents text from pushing elements to new line */
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        /* Action / Dropdown ("Show: All") */
+        .mx_FilteredDeviceListHeader_actions,
+        .mx_Dropdown {
+            margin-left: auto !important; /* Pushes dropdown to far right, or set to 0 to keep close */
+            flex-shrink: 0;
+        }
+    }
+
+    .mx_Dropdown_menu#device-list-filter_listbox,
+    .mx_Dropdown_menu {
+        position: absolute !important;
+        left: 0 !important;
+        right: auto !important;
+        width: max-content !important;
+        min-width: 200px !important;
+        max-width: 320px !important;
+        box-sizing: border-box !important;
+        z-index: 1000 !important;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15) !important;
+
+        .mx_Dropdown_option,
+        .mx_FilterDropdown_option {
+            white-space: normal !important;
+            word-break: break-word !important;
+            padding: 8px 12px !important;
+            box-sizing: border-box !important;
+        }
     }
 }
