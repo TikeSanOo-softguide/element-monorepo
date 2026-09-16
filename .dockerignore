@@ -12,5 +12,7 @@
 **/playwright/
 **/*.md
 !PRODUCTION.md
+# Required by api-extractor during @element-hq/element-web-module-api:build
+!**/*.api.md
 element-web/apps/desktop/
 !element-web/apps/desktop/package.json
