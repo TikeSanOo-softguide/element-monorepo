@@ -1,0 +1,29 @@
+# Production Element Web (static nginx container)
+# Host nginx + certbot stay on the VPS and reverse-proxy here.
+
+services:
+  element-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      target: production
+    image: teak-chat-element:prod
+    container_name: element-web-prod
+    restart: unless-stopped
+    ports:
+      # Bind to localhost only — host nginx/certbot terminates TLS
+      - "127.0.0.1:8080:8080"
+    volumes:
+      # Override without rebuilding the image
+      - ./config/config.production.json:/app/config.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/config.json || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

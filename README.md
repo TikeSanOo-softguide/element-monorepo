@@ -2,6 +2,8 @@
 
 Local Docker setup for **element-web** plus **matrix-js-sdk**. After clone, use Docker Compose — not `make`.
 
+**Production (https://chat-app.burmalearn.site):** see [PRODUCTION.md](./PRODUCTION.md) — use `docker-compose.prod.yml`, not the default compose.
+
 ## Prerequisites
 
 - [Git](https://git-scm.com/)

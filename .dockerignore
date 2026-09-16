@@ -2,5 +2,15 @@
 **/.git
 **/dist
 **/build
+**/lib
+**/webapp
+**/.nx
 **/.turbo
 **/*.log
+**/coverage
+**/test/
+**/playwright/
+**/*.md
+!PRODUCTION.md
+element-web/apps/desktop/
+!element-web/apps/desktop/package.json
