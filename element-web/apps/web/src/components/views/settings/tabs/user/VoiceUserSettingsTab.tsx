@@ -118,7 +118,7 @@ export default class VoiceUserSettingsTab extends React.Component<EmptyObject, I
         let maxLen = 45;
 
         if (screenWidth < 480) {
-            maxLen = 10;  // Small Mobile
+            maxLen = 14;  // Small Mobile
         } else if (screenWidth < 768) {
             maxLen = 20;  // Tablet / Large Mobile
         } else if (screenWidth <= 1024) {
