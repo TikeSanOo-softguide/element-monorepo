@@ -16,6 +16,8 @@ Please see LICENSE files in the repository root for full details.
     .mx_IncomingLegacyCallToast_content {
         display: flex;
         flex-direction: column;
+        min-width: 0;
+        flex: 1;
         margin-left: 8px;
 
         .mx_LegacyCallEvent_caller {
@@ -50,13 +52,13 @@ Please see LICENSE files in the repository root for full details.
             margin-top: 8px;
             display: flex;
             flex-direction: row;
-            gap: 12px;
+            gap: 8px;
 
             .mx_IncomingLegacyCallToast_button {
                 @mixin LegacyCallButton;
-                padding: 8px;
-                flex-shrink: 0;
-                flex-grow: 1;
+                padding: 8px 12px;
+                flex: 1 1 0;
+                min-width: 0;
                 font-size: $font-15px;
             }
         }
@@ -64,13 +66,43 @@ Please see LICENSE files in the repository root for full details.
 
     .mx_IncomingLegacyCallToast_iconButton {
         display: flex;
+        flex: 0 0 20px;
         height: 20px;
         width: 20px;
+        margin-left: 8px;
 
         svg {
             height: inherit;
             width: inherit;
             color: $tertiary-content;
+        }
+    }
+}
+
+@media (max-width: 535px) {
+    .mx_ToastContainer {
+        width: calc(100vw - 24px);
+        max-width: calc(100vw - 24px);
+    }
+
+    .mx_Toast_toast:has(.mx_IncomingLegacyCallToast) {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mx_IncomingLegacyCallToast {
+        .mx_IncomingLegacyCallToast_content {
+            .mx_LegacyCallEvent_caller {
+                max-width: none;
+            }
+
+            .mx_IncomingLegacyCallToast_buttons {
+                gap: 8px;
+
+                .mx_IncomingLegacyCallToast_button {
+                    padding: 8px;
+                }
+            }
         }
     }
 }

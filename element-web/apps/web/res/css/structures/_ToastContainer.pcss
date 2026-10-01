@@ -8,12 +8,24 @@ Please see LICENSE files in the repository root for full details.
 */
 
 .mx_ToastContainer {
-    position: absolute;
-    top: 12px;
-    left: 62px;
-    z-index: 101;
-    display: grid;
-    grid-template-rows: 1fr 28px 8px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: calc(100vw - 32px);
+
+    /* center for incoming call */
+    &:has(.mx_IncomingLegacyCallToast) {
+        top: 50% !important;
+        left: 50% !important;
+        bottom: auto !important;
+        right: auto !important;
+        transform: translate(-50%, -50%) !important;
+        max-width: 400px;
+        width: calc(100vw - 32px);
+        z-index: 6000;
+    }
 
     &.mx_ToastContainer_stacked::before {
         content: "";
@@ -108,4 +120,12 @@ Please see LICENSE files in the repository root for full details.
             font-size: $font-10px;
         }
     }
+
+    .mx_Toast_toast:has(.mx_IncomingLegacyCallToast) {
+        display: block;
+        padding: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
+
