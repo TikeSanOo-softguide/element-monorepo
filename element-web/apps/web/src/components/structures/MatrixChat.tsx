@@ -437,17 +437,23 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             return;
         }
 
-        if (crossSigningIsSetUp) {
-            // if the user has previously set up cross-signing, verify this device so we can fetch the
-            // private keys.
+        // if (crossSigningIsSetUp) {
+        //     // if the user has previously set up cross-signing, verify this device so we can fetch the
+        //     // private keys.
 
-            const cryptoExtension = ModuleRunner.instance.extensions.cryptoSetup;
-            if (cryptoExtension.SHOW_ENCRYPTION_SETUP_UI == false) {
-                this.onShowPostLoginScreen();
-            } else {
-                this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
-            }
-        } else if (!(await shouldSkipSetupEncryption(cli))) {
+        //     const cryptoExtension = ModuleRunner.instance.extensions.cryptoSetup;
+        //     if (cryptoExtension.SHOW_ENCRYPTION_SETUP_UI == false) {
+        //         this.onShowPostLoginScreen();
+        //     } else {
+        //         this.setStateForNewView({ view: Views.COMPLETE_SECURITY });
+        //     }
+        // }
+        /* Fix two step password remove */
+        if (crossSigningIsSetUp) {
+            // Skip the post-login security verification screen and go directly to the logged-in view.
+            this.onShowPostLoginScreen();
+        }
+        else if (!(await shouldSkipSetupEncryption(cli))) {
             // if cross-signing is not yet set up, do so now if possible.
             InitialCryptoSetupStore.sharedInstance().startInitialCryptoSetup(
                 cli,
